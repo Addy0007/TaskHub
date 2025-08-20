@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${project.name}">Project</title>
+</head>
+<body>
+<h1 th:text="${project.name}">Project Name</h1>
+<p th:text="${project.description}"></p>
+<p><b>Type:</b> <span th:text="${project.projectType}"></span></p>
+
+<a href="/ui/projects">⬅ Back to Projects</a>
+</body>
+</html>
