@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>create task</title>
+    <style>.create-task-form {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.create-task-form label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.create-task-form input[type="text"], .create-task-form input[type="number"], .create-task-form input[type="date"], .create-task-form select {
+    width: 100%;
+    height: 40px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.create-task-form input[type="submit"] {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.create-task-form input[type="submit"]:hover {
+    background-color: #3e8e41;
+}
+
+    </style>
+</head>
+<body>
+<div class="create-task-form">
+
+<h1>Create Task</h1>
+<form th:action="@{/tasks/create}" th:object="${task}" method="post">
+    <label for="taskName">Task Name:</label>
+    <input type="text" id="taskName" th:field="*{taskName}" />
+    <br />
+    <label for="taskDescription">Task Description:</label>
+    <input type="text" id="taskDescription" th:field="*{taskDescription}" />
+    <br />
+    <label for="projectId">Project ID:</label>
+    <input type="number" id="projectId" th:field="*{projectId}" />
+    <br />
+    <label for="assignedTo">Assigned To:</label>
+    <input type="text" id="assignedTo" th:field="*{assignedTo}" />
+    <br />
+    <label for="status">Status:</label>
+    <select id="status" th:field="*{status}">
+        <option value="TODO">TODO</option>
+        <option value="IN_PROGRESS">IN_PROGRESS</option>
+        <option value="DONE">DONE</option>
+    </select>
+    <br />
+    <label for="priority">Priority:</label>
+    <select id="priority" th:field="*{priority}">
+        <option value="LOW">LOW</option>
+        <option value="MEDIUM">MEDIUM</option>
+        <option value="HIGH">HIGH</option>
+    </select>
+    <br />
+    <label for="dueDate">Due Date:</label>
+    <input type="date" id="dueDate" th:field="*{dueDate}" />
+    <br />
+    <input type="submit" value="Create Task" />
+</form>
+</div>
+
+</body>
+</html>
