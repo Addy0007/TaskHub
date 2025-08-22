@@ -33,9 +33,16 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String createTask(@ModelAttribute Task task) {
-        taskService.createTask(task);
-        return "redirect:/tasks";
+    public String createTask(@ModelAttribute Task task,Model model) {
+        try {
+            taskService.createTask(task);
+            return "redirect:/tasks";
+        } catch (RuntimeException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("task", task);
+            return "create-task.html";
+        }
+
     }
 
     @GetMapping("/update/{taskId}")

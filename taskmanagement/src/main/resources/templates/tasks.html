@@ -31,19 +31,22 @@ h1 {
 .table-wrapper {
     width: 100%;
     overflow-x: auto;
+    overflow-y: hidden;
 }
 
 table {
     width: 100%;
-    min-width: 800px;
+    min-width: 1200px;
     border-collapse: collapse;
 }
 
 th, td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: left;
-    white-space: nowrap;
+    padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+  white-space: nowrap;
+font-size: 14px; /* Reduced font size to fit more columns */
+
 }
 
 th {
@@ -91,26 +94,34 @@ background-color: #3498db;
 }
 
 .create-task-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    display: block;
-    margin: 20px auto 0;
-    text-align: center;
-    text-decoration: none;
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  font-size: 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: block;
+  margin: 20px auto 0;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 }
+
+
 
 .create-task-btn:hover {
     background-color: #3e8e41;
 }
 
 @media (max-width: 768px) {
-    th, td {
+   table {
+    min-width: 1000px; /* Adjust min-width for smaller screens */
+  }
+ th, td {
         font-size: 13px;
+         padding: 8px 5px;
+
     }
 
     .update, .delete {
@@ -130,34 +141,44 @@ background-color: #3498db;
 
 <h1>Tasks</h1>
     <div class="table-wrapper">
+        <table>
+            <tr>
+                <th>Task ID</th>
+                <th>Task Name</th>
+                <th>Task Description</th>
+                <th>Project ID</th>
+                <th>Category</th>
+                <th>Creator ID</th>
+                <th>Created By</th>
+                <th>Assigned To</th>
+                <th>Assigned To ID</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Due Date</th>
+                <th>Actions</th>
+            </tr>
+            <tr th:each="task : ${tasks}">
+                <td th:text="${task.taskId}">Task ID</td>
+                <td th:text="${task.taskName}">Task Name</td>
+                <td th:text="${task.taskDescription}">Task Description</td>
+                <td th:text="${task.projectId}">Project ID</td>
+                <td th:text="${task.category}">Category</td>
+                <td th:text="${task.creatorId}">Creator ID</td>
+                <td th:text="${task.createdBy}">Created By</td>
+                <td th:text="${task.assignedTo}">Assigned To</td>
+                <td th:text="${task.assignedToId}">Assigned To ID</td>
+                <td th:text="${task.status}">Status</td>
+                <td th:text="${task.priority}">Priority</td>
+                <td th:text="${task.dueDate}">Due Date</td>
+                <td>
+                    <a th:href="@{/tasks/update/{taskId}(taskId=${task.taskId})}" class="update">Update</a>
+                    <a th:href="@{/tasks/delete/{taskId}(taskId=${task.taskId})}" class="delete">Delete</a>
+                </td>
+            </tr>
+        </table>
 
-    <table>
-    <tr>
-        <th>Task ID</th>
-        <th>Task Name</th>
-        <th>Task Description</th>
-        <th>Project ID</th>
-        <th>Assigned To</th>
-        <th>Status</th>
-        <th>Priority</th>
-        <th>Due Date</th>
-        <th>Actions</th>
-    </tr>
-    <tr th:each="task : ${tasks}">
-        <td th:text="${task.taskId}">Task ID</td>
-        <td th:text="${task.taskName}">Task Name</td>
-        <td th:text="${task.taskDescription}">Task Description</td>
-        <td th:text="${task.projectId}">Project ID</td>
-        <td th:text="${task.assignedTo}">Assigned To</td>
-        <td th:text="${task.status}">Status</td>
-        <td th:text="${task.priority}">Priority</td>
-        <td th:text="${task.dueDate}">Due Date</td>
-        <td>
-            <a th:href="@{/tasks/update/{taskId}(taskId=${task.taskId})}" class="update">Update</a>
-            <a th:href="@{/tasks/delete/{taskId}(taskId=${task.taskId})}" class="delete">Delete</a>
-        </td>
-    </tr>
-</table>
+
+
     </div>
 <a th:href="@{/tasks/create}"><button class="create-task-btn">Create Task</button>
 </a>

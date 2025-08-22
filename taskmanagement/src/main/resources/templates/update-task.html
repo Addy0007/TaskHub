@@ -1,82 +1,91 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <title>Update Task</title>
-    <style>.update-task-form {
-    max-width: 500px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+    <style>
+        .update-task-form {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-.update-task-form label {
-    display: block;
-    margin-bottom: 10px;
-}
+        .update-task-form label {
+            display: block;
+            margin-bottom: 10px;
+        }
 
-.update-task-form input[type="text"], .update-task-form input[type="number"], .update-task-form input[type="date"], .update-task-form select {
-    width: 100%;
-    height: 40px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+        .update-task-form input[type="text"],
+        .update-task-form input[type="number"],
+        .update-task-form input[type="date"],
+        .update-task-form select {
+            width: 100%;
+            height: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-.update-task-form input[type="submit"] {
-    background-color: #4CAF50;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        .update-task-form input[type="submit"] {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-.update-task-form input[type="submit"]:hover {
-    background-color: #3e8e41;
-}
-
+        .update-task-form input[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
     </style>
 </head>
 <body>
-<h1>Update Task</h1>
-<form class="update-task-form" th:action="@{/tasks/update/{taskId}(taskId=${task.taskId})}" th:object="${task}" method="post">
-    <label for="taskName">Task Name:</label>
-    <input type="text" id="taskName" th:field="*{taskName}" />
-    <br />
-    <label for="taskDescription">Task Description:</label>
-    <input type="text" id="taskDescription" th:field="*{taskDescription}" />
-    <br />
-    <label for="projectId">Project ID:</label>
-    <input type="number" id="projectId" th:field="*{projectId}" />
-    <br />
-    <label for="assignedTo">Assigned To:</label>
-    <input type="text" id="assignedTo" th:field="*{assignedTo}" />
-    <br />
-    <label for="status">Status:</label>
-    <select id="status" th:field="*{status}">
-        <option value="TODO">TODO</option>
-        <option value="IN_PROGRESS">IN_PROGRESS</option>
-        <option value="DONE">DONE</option>
-    </select>
-    <br />
-    <label for="priority">Priority:</label>
-    <select id="priority" th:field="*{priority}">
-        <option value="LOW">LOW</option>
-        <option value="MEDIUM">MEDIUM</option>
-        <option value="HIGH">HIGH</option>
-    </select>
-    <br />
-    <label for="dueDate">Due Date:</label>
-    <input type="date" id="dueDate" th:field="*{dueDate}" />
-    <br />
-    <input type="submit" value="Update Task" />
-</form>
-
+<div class="update-task-form">
+    <h1>Update Task</h1>
+    <form th:action="@{/tasks/update/{taskId}(taskId=${task.taskId})}" th:object="${task}" method="post">
+        <label for="taskName">Task Name:</label>
+        <input type="text" id="taskName" th:field="*{taskName}" />
+        <label for="taskDescription">Task Description:</label>
+        <input type="text" id="taskDescription" th:field="*{taskDescription}" />
+        <label for="projectId">Project ID:</label>
+        <input type="number" id="projectId" th:field="*{projectId}" />
+        <label for="creatorId">Creator ID:</label>
+        <input type="number" id="creatorId" th:field="*{creatorId}" />
+        <label for="assignedTo">Assigned To:</label>
+        <input type="text" id="assignedTo" th:field="*{assignedTo}" />
+        <label for="assignedToId">Assigned To ID:</label>
+        <input type="number" id="assignedToId" th:field="*{assignedToId}" />
+        <label for="status">Status:</label>
+        <select id="status" th:field="*{status}">
+            <option value="TODO">TODO</option>
+            <option value="IN_PROGRESS">IN_PROGRESS</option>
+            <option value="DONE">DONE</option>
+        </select>
+        <label for="priority">Priority:</label>
+        <select id="priority" th:field="*{priority}">
+            <option value="LOW">LOW</option>
+            <option value="MEDIUM">MEDIUM</option>
+            <option value="HIGH">HIGH</option>
+        </select>
+        <label for="category">Category:</label>
+        <select id="category" th:field="*{category}">
+            <option value="FRONTEND">FRONTEND</option>
+            <option value="BACKEND">BACKEND</option>
+            <option value="FULLSTACK">FULLSTACK</option>
+        </select>
+        <label for="dueDate">Due Date:</label>
+        <input type="date" id="dueDate" th:field="*{dueDate}" />
+        <label for="createdBy">Created By:</label>
+        <input type="text" id="createdBy" th:field="*{createdBy}" />
+        <input type="submit" value="Update Task" />
+    </form>
+</div>
 </body>
 </html>
+

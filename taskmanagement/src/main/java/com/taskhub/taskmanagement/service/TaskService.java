@@ -21,7 +21,14 @@ public class TaskService {
     }
 
     public Task createTask(Task task) {
-        return taskRepository.save(task);
+        List<Task> existingTasks = taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
+                task.getTaskName(), task.getTaskDescription(), task.getProjectId(), task.getCategory());
+        if (existingTasks.isEmpty()) {
+            return taskRepository.save(task);
+        } else {
+            throw new RuntimeException("Task with same name, description, project ID, and category already exists.");
+        }
+
     }
 
     public Task updateTask(Task task) {
