@@ -3,39 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Tasks</title>
-    <style>body {
+    <style>
+        body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
-    max-width: 1200px;
-    margin: 40px auto;
+    max-width: 100%;
     padding: 20px;
     background-color: #fff;
     border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    margin: 30px auto;
+    overflow: hidden;
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
 }
 
 table {
-    border-collapse: collapse;
     width: 100%;
+    min-width: 800px;
+    border-collapse: collapse;
 }
 
 th, td {
-    border: 1px solid #ddd;
     padding: 10px;
+    border: 1px solid #ddd;
     text-align: left;
+    white-space: nowrap;
 }
 
 th {
-    background-color: #f0f0f0;
+    background-color: #f8f8f8;
     font-weight: bold;
 }
 
@@ -44,60 +56,82 @@ tr:nth-child(even) {
 }
 
 tr:hover {
-    background-color: #ddd;
+    background-color: #eee;
 }
 
 .actions {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
-.update-btn, .delete-btn {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.update-btn {
-    background-color: #4CAF50;
+.update {
+background-color: #3498db;
     color: #fff;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
 }
 
-.update-btn:hover {
-    background-color: #3e8e41;
+.update:hover {
+    background-color: #2c80b4;
 }
 
-.delete-btn {
+.delete {
     background-color: #e74c3c;
     color: #fff;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
 }
 
-.delete-btn:hover {
+.delete:hover {
     background-color: #c0392b;
 }
 
 .create-task-btn {
     background-color: #4CAF50;
-    color: #fff;
+    color: white;
     padding: 10px 20px;
+    font-size: 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    float: right;
-    margin-top: 20px;
+    display: block;
+    margin: 20px auto 0;
+    text-align: center;
+    text-decoration: none;
 }
 
 .create-task-btn:hover {
     background-color: #3e8e41;
 }
 
-    </style>
+@media (max-width: 768px) {
+    th, td {
+        font-size: 13px;
+    }
+
+    .update, .delete {
+        padding: 5px 10px;
+        font-size: 13px;
+    }
+
+    .create-task-btn {
+        width: 100%;
+        font-size: 16px;
+    }
+}
+   </style>
 </head>
 <body>
 <div class="container">
 
 <h1>Tasks</h1>
-<table>
+    <div class="table-wrapper">
+
+    <table>
     <tr>
         <th>Task ID</th>
         <th>Task Name</th>
@@ -119,11 +153,12 @@ tr:hover {
         <td th:text="${task.priority}">Priority</td>
         <td th:text="${task.dueDate}">Due Date</td>
         <td>
-            <a th:href="@{/tasks/update/{taskId}(taskId=${task.taskId})}">Update</a>
-            <a th:href="@{/tasks/delete/{taskId}(taskId=${task.taskId})}">Delete</a>
+            <a th:href="@{/tasks/update/{taskId}(taskId=${task.taskId})}" class="update">Update</a>
+            <a th:href="@{/tasks/delete/{taskId}(taskId=${task.taskId})}" class="delete">Delete</a>
         </td>
     </tr>
 </table>
+    </div>
 <a th:href="@{/tasks/create}"><button class="create-task-btn">Create Task</button>
 </a>
 </div>
