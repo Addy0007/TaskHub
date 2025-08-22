@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Welcome</title>
+</head>
+<body>
+    <h2>Welcome!</h2>
+
+    <p><strong>Username:</strong> <span th:text="${response.username}"></span></p>
+    <p><strong>JWT Token:</strong> <span th:text="${response.token}"></span></p>
+    <p><strong>Message:</strong> <span th:text="${response.message}"></span></p>
+
+    <div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+
+    <h3>Roles:</h3>
+    <ul>
+        <li th:each="role : ${response.roles}" th:text="${role}"></li>
+    </ul>
+	
+	<div>
+	    <form th:action="@{/api/auth/update}" method="get">
+	        <button type="submit">Update Profile</button>
+	    </form>
+	</div>
+</body>
+</html>
