@@ -21,7 +21,7 @@
 
 <nav class="navbar navbar-light bg-white border-bottom mb-4">
     <div class="container">
-        <a class="navbar-brand fw-semibold" href="/ui/projects">TaskHub</a>
+        <a class="navbar-brand fw-semibold" href="/projects">TaskHub</a>
     </div>
 </nav>
 
@@ -31,7 +31,7 @@
             <div class="card p-4">
                 <h3 class="mb-3">Create project</h3>
 
-                <form th:action="@{/ui/projects/new}" th:object="${form}" method="post" novalidate>
+                <form th:action="@{/projects/new}" th:object="${form}" method="post" novalidate>
                     <div class="row g-3">
                         <!-- Name -->
                         <div class="col-12">
@@ -89,7 +89,7 @@
                     </div>
 
                     <div class="mt-4 d-flex gap-2">
-                        <a class="btn btn-outline-secondary" href="/ui/projects">Back</a>
+                        <a class="btn btn-outline-secondary" href="/projects">Back</a>
                         <button class="btn btn-primary" type="submit">Create</button>
                     </div>
                 </form>

@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
     public String handleDenied(AccessDeniedException ex, HttpServletRequest req, RedirectAttributes ra){
         ra.addFlashAttribute("error", "Only admins can perform this action.");
         String back = req.getHeader("Referer");
-        return "redirect:" + (back != null ? back : "/ui/projects");
+        return "redirect:" + (back != null ? back : "/projects");
     }
 
 }
