@@ -1,43 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>User Registration</title>
+    <meta charset="UTF-8">
+    <title>User Registration - TaskHub</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    <div class="container">
+        <h2>Create Your TaskHub Account</h2>
+        <h3>Join us today!</h3>
 
-<div class="header">User Registration</div>
+        <!-- Success Message -->
+        <div th:if="${message}" style="background-color: #e8f5e8; color: #2e7d32; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
+            <p th:text="${message}"></p>
+        </div>
 
-<div class="container">
-    <h2>Register User</h2>
+        <!-- Error Message -->
+        <div th:if="${error}" style="background-color: #ffebee; color: #c62828; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
+            <p th:text="${error}"></p>
+        </div>
 
-    <form th:action="@{/api/auth/register}" method="post" th:object="${signupRequest}">
-        <label>Name:</label>
-        <input type="text" th:field="*{name}" />
+        <!-- Registration Form -->
+        <form th:action="@{/api/auth/register}" method="post" th:object="${signupRequest}">
+            <div>
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" th:field="*{name}" placeholder="Enter your full name" required />
+            </div>
 
-        <label>Email:</label>
-        <input type="email" th:field="*{email}" />
+            <div>
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" th:field="*{email}" placeholder="Enter your email address" required />
+            </div>
 
-        <label>Password:</label>
-        <input type="password" th:field="*{password}" />
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" th:field="*{password}" placeholder="Create a strong password" required />
+            </div>
 
-        <label>Role:</label>
-        <input type="text" th:field="*{role}" />
+            <div>
+                <label for="role">Role:</label>
+                <select id="role" th:field="*{role}" required>
+                    <option value="">Select your role</option>
+                    <option value="USER">User</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="MANAGER">Manager</option>
+                </select>
+            </div>
 
-        <button type="submit">Register</button>
-    </form>
-</div>
+            <div>
+                <button type="submit">Create Account</button>
+            </div>
+        </form>
 
-<div class="success-container">
-    <h2 th:text="${message}"></h2>
-</div>
-
-<div>
-    <form th:action="@{/api/auth/login}" method="get">
-        <button type="submit">Login User</button>
-    </form>
-</div>
-
-
+        <!-- Login Redirect -->
+        <div style="text-align: center; margin-top: 20px;">
+            <a th:href="@{/api/auth/login}" style="color: #3498db; text-decoration: none;">Already have an account? Login here</a>
+        </div>
+    </div>
 </body>
 </html>

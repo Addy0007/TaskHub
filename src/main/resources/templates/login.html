@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <title>Login - TaskHub</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <h2>Login Page</h2>
-    <div>
-        <a href="/api/auth/register">Register</a>
+    <div class="container">
+        <h2>Welcome to TaskHub</h2>
+        <h3>Login to Your Account</h3>
+
+        <!-- Link to Registration -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a th:href="@{/api/auth/register}" style="color: #3498db; text-decoration: none;">Don't have an account? Register here</a>
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${error}" style="background-color: #ffebee; color: #c62828; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
+            <p th:text="${error}"></p>
+        </div>
+
+        <!-- Login Form -->
+        <form th:action="@{/api/auth/login}" th:object="${loginRequest}" method="post">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" th:field="*{userName}" placeholder="Enter your username" required />
+            </div>
+
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" th:field="*{password}" placeholder="Enter your password" required />
+            </div>
+
+            <div>
+                <button type="submit">Login</button>
+            </div>
+        </form>
     </div>
-
-    <div th:if="${error}">
-        <p style="color: red;" th:text="${error}"></p>
-    </div>
-
-    <form th:action="@{/api/auth/login}" th:object="${loginRequest}" method="post">
-        <label>Username:</label>
-        <input type="text" th:field="*{userName}" placeholder="Enter Username" required />
-        <br/>
-
-        <label>Password:</label>
-        <input type="password" th:field="*{password}" placeholder="Enter Password" required />
-        <br/>
-
-        <button type="submit">Login</button>
-    </form>
 </body>
 </html>

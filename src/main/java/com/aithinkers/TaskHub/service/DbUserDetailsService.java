@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,12 +23,20 @@ import lombok.RequiredArgsConstructor;
 public class DbUserDetailsService implements UserDetailsService {
 
     private final RegisterUserRepo registerUserRepo;
+    private static final Logger logger = LoggerFactory.getLogger(DbUserDetailsService.class);
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        logger.debug("Attempting to load user by username: {}", username);
+        
         User user = registerUserRepo.findByName(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+            .orElseThrow(() -> {
+                logger.error("User not found in database: {}", username);
+                return new UsernameNotFoundException("User not found: " + username);
+            });
 
+        logger.debug("User found: {} with role: {}", user.getName(), user.getRole());
+        
         Collection<GrantedAuthority> authorities = parseAuthorities(user.getRole());
 
         return org.springframework.security.core.userdetails.User
