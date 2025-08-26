@@ -1,0 +1,89 @@
+package com.taskhub.taskmanagement.repository;
+
+import com.taskhub.taskmanagement.entity.Task;
+import com.taskhub.taskmanagement.entity.TaskCategory;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@ExtendWith(SpringExtension.class)
+@DataJpaTest
+public class TaskRepositoryTest {
+    @Autowired
+    private TaskRepository taskRepository;
+
+    @Test
+    public void testFindByTaskNameAndTaskDescriptionAndAssignedToId() {
+        // Arrange
+        Task task = new Task();
+        task.setTaskName("Test Task");
+        task.setTaskDescription("Test Description");
+        task.setAssignedToId(1L);
+        taskRepository.save(task);
+
+        // Act
+        List<Task> result = taskRepository.findByTaskNameAndTaskDescriptionAndAssignedToId(
+                "Test Task", "Test Description", 1L);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals(task, result.get(0));
+    }
+
+    @Test
+    public void testFindByTaskNameAndTaskDescriptionAndCategoryAndProjectIdAndAssignedToId() {
+        // Arrange
+        Task task = new Task();
+        task.setTaskName("Test Task");
+        task.setTaskDescription("Test Description");
+        task.setCategory(TaskCategory.FRONTEND);
+        task.setProjectId(1L);
+        task.setAssignedToId(1L);
+        taskRepository.save(task);
+
+        // Act
+        List<Task> result = taskRepository.findByTaskNameAndTaskDescriptionAndCategoryAndProjectIdAndAssignedToId(
+                "Test Task", "Test Description", TaskCategory.FRONTEND, 1L, 1L);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals(task, result.get(0));
+    }
+
+    @Test
+    public void testFindByTaskNameAndTaskDescriptionAndProjectIdAndCategory() {
+        // Arrange
+        Task task = new Task();
+        task.setTaskName("Test Task");
+        task.setTaskDescription("Test Description");
+        task.setProjectId(1L);
+        task.setCategory(TaskCategory.FRONTEND);
+        taskRepository.save(task);
+
+        // Act
+        List<Task> result = taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
+                "Test Task", "Test Description", 1L, TaskCategory.FRONTEND);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals(task, result.get(0));
+    }
+
+    @Test
+    public void testFindByTaskNameAndTaskDescriptionAndProjectIdAndCategoryNoResult() {
+        // Act
+        List<Task> result = taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
+                "Test Task", "Test Description", 1L, TaskCategory.FRONTEND);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+}

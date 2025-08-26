@@ -34,13 +34,17 @@ public class TaskController {
 
     @PostMapping("/create")
     public String createTask(@ModelAttribute Task task,Model model) {
+        if (task == null) {
+            model.addAttribute("errorMessage", "Task cannot be null");
+            return "create-task";
+        }
         try {
             taskService.createTask(task);
             return "redirect:/tasks";
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("task", task);
-            return "create-task.html";
+            return "create-task";
         }
 
     }
@@ -52,11 +56,18 @@ public class TaskController {
     }
 
     @PostMapping("/update/{taskId}")
-    public String updateTask(@PathVariable Long taskId, @ModelAttribute Task task) {
-        task.setTaskId(taskId);
+    public String updateTask(@PathVariable Long taskId, @ModelAttribute Task task,Model model) {
+        if (task == null|| task.getTaskName() == null) {
+            return "redirect:/tasks"; // or return an error view
+        }
+        try {
+            taskService.updateTask(task);
+            return "redirect:/tasks";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "update-task";
+        }
 
-        taskService.updateTask(task);
-        return "redirect:/tasks";
     }
 
     @GetMapping("/delete/{taskId}")

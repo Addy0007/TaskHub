@@ -41,6 +41,7 @@ public class TaskService {
             existingTask.setStatus(task.getStatus());
             existingTask.setPriority(task.getPriority());
             existingTask.setDueDate(task.getDueDate());
+            existingTask.setCategory(task.getCategory());
             return taskRepository.save(existingTask);
         } else {
             return null;
