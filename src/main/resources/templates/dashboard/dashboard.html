@@ -65,9 +65,18 @@
       </div>
 
       <div class="card p-3 mt-3">
-        <h6 class="mb-2">My tasks (coming soon)</h6>
-        <div class="text-muted small">We’ll plug tasks here later.</div>
+        <h6 class="mb-2">My tasks</h6>
+        <ul class="list-group">
+          <li th:each="task : ${tasks}" class="list-group-item d-flex justify-content-between align-items-center">
+            <span>
+                <strong th:text="${task.title}"></strong><br>
+                <small th:text="${task.description}"></small>
+            </span>
+            <span class="badge bg-primary rounded-pill" th:text="${task.status}"></span>
+          </li>
+        </ul>
       </div>
+
     </div>
   </div>
 </div>

@@ -1,6 +1,11 @@
 package com.aithinkers.TaskHub.Controller;
 
+import com.aithinkers.TaskHub.Entity.Project;
+import com.aithinkers.TaskHub.Entity.User;
+import com.aithinkers.TaskHub.Enum.Role;
 import com.aithinkers.TaskHub.Service.ProjectService;
+import com.aithinkers.TaskHub.Service.ProjectServiceImpl;
+import com.aithinkers.TaskHub.Service.TaskService;
 import com.aithinkers.TaskHub.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -9,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +30,7 @@ public class DashboardController {
 
     private final ProjectService projectService;
     private final UserService userService;
+    private final TaskService taskService;
 
 /*  @Authenticated Principal UserDetails Principal
 * Here Spring Security Injects the Logged-in User or Person as Principal
@@ -43,10 +51,15 @@ Purpose: in the dashboard page, you’ll be able to display info about the curre
     @GetMapping
     public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model){
 
-        if(principal != null){
-            model.addAttribute("myself",userService.findByEmail(principal.getUsername()));
-        }
-        model.addAttribute("projects",projectService.getAllProjects());
+        User me = userService.findByEmail(principal.getUsername());
+
+        List<Project> projects = (me.getRole() == Role.ADMIN)
+                ? projectService.getAllProjects()
+                : projectService.getForUser(me.getId());   // << filter here
+
+        model.addAttribute("myself", me);
+        model.addAttribute("projects", projects);
+        model.addAttribute("tasks",taskService.getAllTasks());
 
         return "dashboard/dashboard";
     }

@@ -23,7 +23,7 @@ public class UserService {
         return userRepo.findAll();
     }
     //here we are fetching user by email
-    //if not found it throws and illegalargument like user not found by thr given email
+    //if not found it throws and illegal argument like user not found by thr given email
     public User findByEmail(String email){
         return userRepo.findByEmail(email)
                 .orElseThrow(()-> new IllegalArgumentException("USer Not Found : "+ email));

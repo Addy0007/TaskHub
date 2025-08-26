@@ -52,5 +52,5 @@ public class Project {
 
     //builder() a lombark function
     //that generates static builder,you can construct objects clean and simple like above
-    //or we need use EX:USer U=new User();->u.setEmail(email)etc
+    //or we need use EX:User U=new User();->u.setEmail(email)etc
 }

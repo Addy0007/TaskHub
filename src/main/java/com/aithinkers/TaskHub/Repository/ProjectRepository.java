@@ -1,9 +1,12 @@
 package com.aithinkers.TaskHub.Repository;
 
 import com.aithinkers.TaskHub.Entity.Project;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ProjectRepository  extends JpaRepository<Project,Long> {
@@ -26,4 +29,15 @@ public interface ProjectRepository  extends JpaRepository<Project,Long> {
         select p from Project p
         left join fetch p.members where p.id = :id""")
     Optional<Project> findWithMembers(Long id);
+
+//Here the Query Logic was return the projects were the member was part of District means Unique
+    //selects all distinct projects(p) from project entity and Join projects with thier members(p.members)
+    //and filter where the members id = userid and then ORDERS the resulting projects by projectId in descending order
+
+@Query("""
+        SELECT DISTINCT p FROM Project p 
+        JOIN p.members m 
+        WHERE m.id = :userId
+        ORDER BY p.id DESC""")
+List<Project> findAllByMemberId(@Param("userId") Long userId);
 }
