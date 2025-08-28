@@ -1,4 +1,5 @@
 # TaskHub
+dev
 # TaskHub
 Task Management - Task Module
 
@@ -46,3 +47,6 @@ Task Service
 - H2 Embedded Database
 - Thymeleaf (for frontend)
 - Maven
+
+## This is a spring boot project to manage task between the projects and their team members.
+ dev
