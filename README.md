@@ -46,3 +46,8 @@ Task Service
 - H2 Embedded Database
 - Thymeleaf (for frontend)
 - Maven
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> b063974e5737eacfd1f70027d599cb6ae2e2f55a
