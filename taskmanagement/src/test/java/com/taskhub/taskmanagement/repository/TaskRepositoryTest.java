@@ -75,11 +75,9 @@ public class TaskRepositoryTest {
                 "Test Task", "Test Description", 1L, TaskCategory.FRONTEND))
                 .thenReturn(List.of(task));
 
-
         List<Task> result = taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
                 "Test Task", "Test Description", 1L, TaskCategory.FRONTEND);
 
-        // Assert
         assertEquals(1, result.size());
         assertEquals(task, result.get(0));
         verify(taskRepository, times(1)).findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
@@ -92,11 +90,10 @@ public class TaskRepositoryTest {
         when(taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
                 "Test Task", "Test Description", 1L, TaskCategory.FRONTEND))
                 .thenReturn(List.of());
-        // Act
+
         List<Task> result = taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
                 "Test Task", "Test Description", 1L, TaskCategory.FRONTEND);
 
-        // Assert
         assertTrue(result.isEmpty());
         verify(taskRepository, times(1)).findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
                 "Test Task", "Test Description", 1L, TaskCategory.FRONTEND);
