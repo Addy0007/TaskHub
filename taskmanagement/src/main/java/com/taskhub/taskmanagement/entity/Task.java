@@ -1,9 +1,13 @@
 package com.taskhub.taskmanagement.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "tasks")
@@ -11,20 +15,35 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
+    @NotBlank(message = "Task name is required")
+    @Size(min = 10, message = "Task name should be at least 10 characters long")
     private String taskName;
+    @NotBlank(message = "Task description is required")
+    @Size(min = 1000, message = "Task description should be at least 1000 characters long")
+    @Column(length = 2000)
     private String taskDescription;
+    @NotNull(message = "Project ID is required")
     private Long projectId; //Foreign key for project tabe
+    @NotNull(message = "Creator ID is required")
     private Long creatorId;//Foreign key for the user table
+    @NotNull(message = "Assigned to ID is required")
     private Long assignedToId;  // FK to User
+    @NotBlank(message = "name of the user to whom the task is assigned is required")
     private String assignedTo;
+    @NotNull(message = "Status is required")
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+    @NotNull(message = "Priority is required")
     @Enumerated(EnumType.STRING)
     private TaskPriority priority;
+    @NotNull(message = "Category is required")
     @Enumerated(EnumType.STRING)
     private TaskCategory category;
+    @NotNull(message = "Due date is required")
+    @FutureOrPresent(message = "Due date should be present or future date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dueDate;
+    private LocalDate dueDate;
+    @NotBlank(message = "Created by is required")
     private String createdBy;
 
     public Long getAssignedToId() {
@@ -55,11 +74,11 @@ public class Task {
         this.taskId = taskId;
     }
 
-    public Date getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(Date dueDate) {
+    public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
 

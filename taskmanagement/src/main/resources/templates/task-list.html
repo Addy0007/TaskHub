@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Tasks</title>
-    <style>
-        body {
+    <title>Task List</title>
+    <style>      body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     margin: 0;
@@ -164,61 +163,32 @@ background-color: #3498db;
         font-size: 16px;
     }
 }
-   </style>
+    </style>
 </head>
 <body>
-<div class="container">
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Assigned To</th>
+        <th>Assigned By</th>
+        <th>Status</th>
+        <th>Priority</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="task : tasks">
+        <td th:text="{task.title}"></td>
+        <td th:text="task.description"></td>
+        <td th:text="{task.assignedTo}"></td>
+        <td th:text="task.assignedBy"></td>
+        <td th:text="{task.status}"></td>
+        <td th:text="${task.priority}"></td>
+    </tr>
+    </tbody>
+</table>
 
-<h1>Tasks</h1>
-
-    <form th:action="@{/tasks}" method="get">
-        <input type="text" th:name="query" placeholder="Search tasks" th:value="${query}" />
-        <button type="submit">Search</button>
-    </form>
-
-    <div class="table-wrapper">
-        <table>
-            <tr>
-                <th>Task ID</th>
-                <th>Task Name</th>
-                <th>Task Description</th>
-                <th>Project ID</th>
-                <th>Category</th>
-                <th>Creator ID</th>
-                <th>Created By</th>
-                <th>Assigned To</th>
-                <th>Assigned To ID</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Due Date</th>
-                <th>Actions</th>
-            </tr>
-            <tr th:each="task : ${tasks}">
-                <td th:text="${task.taskId}">Task ID</td>
-                <td th:text="${task.taskName}">Task Name</td>
-                <td th:text="${task.taskDescription}">Task Description</td>
-                <td th:text="${task.projectId}">Project ID</td>
-                <td th:text="${task.category}">Category</td>
-                <td th:text="${task.creatorId}">Creator ID</td>
-                <td th:text="${task.createdBy}">Created By</td>
-                <td th:text="${task.assignedTo}">Assigned To</td>
-                <td th:text="${task.assignedToId}">Assigned To ID</td>
-                <td th:text="${task.status}">Status</td>
-                <td th:text="${task.priority}">Priority</td>
-                <td th:text="${task.dueDate}">Due Date</td>
-                <td>
-                    <a th:href="@{/tasks/update/{taskId}(taskId=${task.taskId})}" class="update">Update</a>
-                    <a th:href="@{/tasks/delete/{taskId}(taskId=${task.taskId})}" class="delete">Delete</a>
-                </td>
-            </tr>
-        </table>
-
-
-
-    </div>
-<a th:href="@{/tasks/create}"><button class="create-task-btn">Create Task</button>
-</a>
-</div>
 
 </body>
 </html>

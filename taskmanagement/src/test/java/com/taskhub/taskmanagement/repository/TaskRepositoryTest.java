@@ -24,7 +24,6 @@ public class TaskRepositoryTest {
 
     @Test
     public void testFindByTaskNameAndTaskDescriptionAndAssignedToId() {
-        // Arrange
         Task task = new Task();
         task.setTaskName("Test Task");
         task.setTaskDescription("Test Description");
@@ -33,12 +32,9 @@ public class TaskRepositoryTest {
                 "Test Task", "Test Description", 1L))
                 .thenReturn(List.of(task));
 
-
-        // Act
         List<Task> result = taskRepository.findByTaskNameAndTaskDescriptionAndAssignedToId(
                 "Test Task", "Test Description", 1L);
 
-        // Assert
         assertEquals(1, result.size());
         assertEquals(task, result.get(0));
         verify(taskRepository, times(1)).findByTaskNameAndTaskDescriptionAndAssignedToId(
@@ -48,7 +44,6 @@ public class TaskRepositoryTest {
 
     @Test
     public void testFindByTaskNameAndTaskDescriptionAndCategoryAndProjectIdAndAssignedToId() {
-        // Arrange
         Task task = new Task();
         task.setTaskName("Test Task");
         task.setTaskDescription("Test Description");
@@ -59,12 +54,9 @@ public class TaskRepositoryTest {
                 "Test Task", "Test Description", TaskCategory.FRONTEND, 1L, 1L))
                 .thenReturn(List.of(task));
 
-
-        // Act
         List<Task> result = taskRepository.findByTaskNameAndTaskDescriptionAndCategoryAndProjectIdAndAssignedToId(
                 "Test Task", "Test Description", TaskCategory.FRONTEND, 1L, 1L);
 
-        // Assert
         assertEquals(1, result.size());
         assertEquals(task, result.get(0));
         verify(taskRepository, times(1)).findByTaskNameAndTaskDescriptionAndCategoryAndProjectIdAndAssignedToId(
@@ -74,7 +66,6 @@ public class TaskRepositoryTest {
 
     @Test
     public void testFindByTaskNameAndTaskDescriptionAndProjectIdAndCategory() {
-        // Arrange
         Task task = new Task();
         task.setTaskName("Test Task");
         task.setTaskDescription("Test Description");
@@ -85,7 +76,6 @@ public class TaskRepositoryTest {
                 .thenReturn(List.of(task));
 
 
-        // Act
         List<Task> result = taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
                 "Test Task", "Test Description", 1L, TaskCategory.FRONTEND);
 

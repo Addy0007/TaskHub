@@ -18,4 +18,14 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             @Param("taskDescription") String taskDescription,
             @Param("projectId") Long projectId,
             @Param("category") TaskCategory category);
+
+    @Query("SELECT t FROM Task t WHERE " +
+            "LOWER(t.taskName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(t.taskDescription) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(t.category) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(t.status) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(t.priority) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(t.createdBy) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(t.assignedTo) LIKE LOWER(CONCAT('%', :query, '%'))")
+    List<Task> searchTasks(@Param("query") String query);
 }
