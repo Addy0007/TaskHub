@@ -119,7 +119,7 @@ public class ProjectController {
 
    ->Notify is just a flash message to pop up in screen used in front end
 
-   {Id}->project you r working on
+   {Id}->project you are working on
    members->people working on the project
    userId->Specific User Inside that Project*/
 

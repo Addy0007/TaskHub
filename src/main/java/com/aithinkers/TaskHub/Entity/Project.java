@@ -39,7 +39,7 @@ public class Project {
     join columns=@joincolumn(name='project_id")
             inverseJoinColumns = @joinColumn("userid")
     ->this projectmembers will be middle table combining or using both the other tables
-    pk or columns*/
+    pk(Primary Key) or columns*/
 
     //This was an Link between Project <-> User
     @ManyToMany
