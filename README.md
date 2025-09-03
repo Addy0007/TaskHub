@@ -48,5 +48,4 @@ Task Service
 - Thymeleaf (for frontend)
 - Maven
 
-## This is a spring boot project to manage task between the projects and their team members.
- dev
+
