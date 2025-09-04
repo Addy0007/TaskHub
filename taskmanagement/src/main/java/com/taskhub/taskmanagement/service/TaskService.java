@@ -22,7 +22,7 @@ public class TaskService {
 
     public Task getTaskById(Long taskId) {
         if (taskId == null) {
-            throw new RuntimeException("Task ID is required");
+            throw new NullPointerException("Task ID is required");
         }
         try {
             return taskRepository.findById(taskId).orElseThrow(() -> new NoSuchElementException("Task not found with ID " + taskId));
@@ -33,7 +33,7 @@ public class TaskService {
 
     public Task createTask(Task task) {
         if (task == null) {
-            throw new RuntimeException("Task is required");
+            throw new NullPointerException("Task is required");
         }
         try {
             List<Task> existingTasks = taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
@@ -49,7 +49,7 @@ public class TaskService {
 
     public Task updateTask(Task task) {
         if (task == null || task.getTaskId() == null) {
-            throw new RuntimeException("Task ID is required");
+            throw new NullPointerException("Task ID is required");
         }
         try {
             Task existingTask = taskRepository.findById(task.getTaskId()).orElseThrow(() -> new NoSuchElementException("Task not found with ID " + task.getTaskId()));
@@ -69,7 +69,7 @@ public class TaskService {
 
     public void deleteTask(Long taskId) {
         if (taskId == null) {
-            throw new RuntimeException("Task ID is required");
+            throw new NullPointerException("Task ID is required");
         }
         try {
             taskRepository.deleteById(taskId);
@@ -80,7 +80,7 @@ public class TaskService {
 
     public List<Task> searchTasks(String query) {
         if (query == null || query.isEmpty()) {
-            throw new RuntimeException("Search query is required");
+            throw new NullPointerException("Search query is required");
         }
         try {
             return taskRepository.searchTasks(query);

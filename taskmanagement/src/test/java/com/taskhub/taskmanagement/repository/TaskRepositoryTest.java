@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@DataJpaTest
 public class TaskRepositoryTest {
     @Mock
     private TaskRepository taskRepository;
