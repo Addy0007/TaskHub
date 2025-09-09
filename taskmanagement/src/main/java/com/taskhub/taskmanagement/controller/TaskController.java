@@ -1,5 +1,7 @@
 package com.taskhub.taskmanagement.controller;
 
+import com.taskhub.taskmanagement.entity.TaskStatus;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +22,7 @@ public class TaskController {
 
     @Operation(summary = "get task by its id")
     @GetMapping("/{taskId}")
-    public String getTaskById(@PathVariable Long taskId, Model model) {
+    public String getTaskById(@Parameter(description = "Id of the task to retrieve")@PathVariable Long taskId, Model model) {
         model.addAttribute("task", taskService.getTaskById(taskId));
         return "task";
     }
@@ -59,13 +61,13 @@ public class TaskController {
     }
 
     @GetMapping("/update/{taskId}")
-    public String updateTaskForm(@PathVariable Long taskId, Model model) {
+    public String updateTaskForm(@Parameter(description = "Id of the task to update")@PathVariable Long taskId, Model model) {
         model.addAttribute("task", taskService.getTaskById(taskId));
         return "update-task";
     }
     @Operation(summary = "update a task")
     @PostMapping("/update/{taskId}")
-    public String updateTask(@PathVariable Long taskId, @ModelAttribute Task task,Model model) {
+    public String updateTask(@Parameter(description = "Id of the task to update")@PathVariable Long taskId, @ModelAttribute Task task,Model model) {
         if (task == null|| task.getTaskName() == null) {
             return "redirect:/tasks"; // or return an error view
         }
@@ -80,20 +82,60 @@ public class TaskController {
     }
     @Operation(summary = "delete a task")
     @GetMapping("/delete/{taskId}")
-    public String deleteTask(@PathVariable Long taskId) {
+    public String deleteTask(@Parameter(description = "Id of the task to delete")@PathVariable Long taskId) {
         taskService.deleteTask(taskId);
         return "redirect:/tasks";
     }
+    @GetMapping("/status/todo")
+    public String getTodoTasks(Model model) {
+        List<Task> tasks = taskService.getTasksByStatus(TaskStatus.TODO);
+        model.addAttribute("tasks", tasks);
+        return "tasks";
+    }
+
+    @GetMapping("/status/in-progress")
+    public String getInProgressTasks(Model model) {
+        List<Task> tasks = taskService.getTasksByStatus(TaskStatus.IN_PROGRESS);
+        model.addAttribute("tasks", tasks);
+        return "tasks";
+    }
+
+    @GetMapping("/status/done")
+    public String getDoneTasks(Model model) {
+        List<Task> tasks = taskService.getTasksByStatus(TaskStatus.DONE);
+        model.addAttribute("tasks", tasks);
+        return "tasks";
+    }
+
+
     @Operation(summary = "get all tasks or get task based on search ")
     @GetMapping
-    public String getTasks(@RequestParam(required = false) String query, Model model) {
-        if (query != null && !query.isEmpty()) {
-            List<Task> tasks = taskService.searchTasks(query);
+    public String getTasks(@Parameter(description = "Search query")@RequestParam(required = false) String query, Model model) {
+        List<Task> tasks;
+        if(query != null && !query.isEmpty()) {
+            tasks = taskService.searchTasks(query);
             model.addAttribute("tasks", tasks);
         } else {
-            List<Task> tasks = taskService.getAllTasks();
-            model.addAttribute("tasks", tasks);
+            tasks = taskService.getAllTasks();
+
         }
+        model.addAttribute("tasks", tasks);
+        int doneCount = 0;
+        int inProgressCount = 0;
+        int todoCount = 0;
+        for (Task task : tasks) {
+            if (task.getStatus()== TaskStatus.DONE) {
+                doneCount++;
+            } else if (task.getStatus()== TaskStatus.IN_PROGRESS) {
+                inProgressCount++;
+            } else if (task.getStatus()== TaskStatus.TODO) {
+                todoCount++;
+            }
+        }
+        model.addAttribute("doneCount", doneCount);
+        model.addAttribute("inProgressCount", inProgressCount);
+        model.addAttribute("todoCount", todoCount);
+        model.addAttribute("totalCount", tasks.size());
         return "tasks";
     }
 

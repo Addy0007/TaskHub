@@ -175,6 +175,8 @@ background-color: #3498db;
         <th>Assigned By</th>
         <th>Status</th>
         <th>Priority</th>
+        <th>Category</th>
+        <th>Due Date</th>
     </tr>
     </thead>
     <tbody>
@@ -185,6 +187,8 @@ background-color: #3498db;
         <td th:text="task.assignedBy"></td>
         <td th:text="{task.status}"></td>
         <td th:text="${task.priority}"></td>
+        <td th:text="${task.category}"></td>
+        <td th:text="${task.dueDate}"></td>
     </tr>
     </tbody>
 </table>

@@ -107,6 +107,12 @@ public class TaskControllerTest {
         assertEquals("redirect:/tasks", viewName);
         verify(taskService, times(1)).deleteTask(1L);
 }
-
-
-}
+    @Test
+    public void testGetTasksWithQuery() {
+        List<Task> tasks = new ArrayList<>();
+        when(taskService.searchTasks("query")).thenReturn(tasks);
+        String viewName = taskController.getTasks("query", model);
+        assertEquals("tasks", viewName);
+        verify(model, times(1)).addAttribute("tasks", tasks);
+    }
+    }

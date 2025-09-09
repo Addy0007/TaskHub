@@ -1,6 +1,7 @@
 package com.taskhub.taskmanagement.service;
 
 import com.taskhub.taskmanagement.entity.Task;
+import com.taskhub.taskmanagement.entity.TaskStatus;
 import com.taskhub.taskmanagement.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,6 +67,10 @@ public class TaskService {
             throw new RuntimeException("Failed to update task", ex);
         }
     }
+    public List<Task> getTasksByStatus(TaskStatus status) {
+        return taskRepository.findByStatus(status);
+    }
+
 
     public void deleteTask(Long taskId) {
         if (taskId == null) {

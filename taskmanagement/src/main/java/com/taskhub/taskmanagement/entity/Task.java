@@ -1,5 +1,6 @@
 package com.taskhub.taskmanagement.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "tasks")
+@Schema(description = "Task entity")
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

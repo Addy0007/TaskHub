@@ -11,8 +11,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 import static org.mockito.Mockito.times;
@@ -53,6 +55,7 @@ public class TaskServiceTest {
     public void testCreateTask() {
         Task task = new Task();
         when(taskRepository.save(task)).thenReturn(task);
+        when(taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(any(), any(), any(), any())).thenReturn(new ArrayList<>());
 
         Task result = taskService.createTask(task);
 
@@ -64,7 +67,7 @@ public class TaskServiceTest {
         Task task = new Task();
         task.setTaskId(1L);
         when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
-        when(taskRepository.save(task)).thenReturn(task);
+        when(taskRepository.save(any())).thenReturn(task);
 
         Task result = taskService.updateTask(task);
          assertEquals(task, result);
@@ -72,13 +75,36 @@ public class TaskServiceTest {
 
     @Test
     public void testDeleteTask() {
-
         taskService.deleteTask(1L);
-
-
         verify(taskRepository, Mockito.times(1)).deleteById(1L);
     }
+    @Test
+    public void testGetTaskByIdNotFound() {
+        when(taskRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> taskService.getTaskById(1L));
+    }
+    @Test
+    public void testCreateTaskAlreadyExists() {
+        Task task = new Task();
+        when(taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(any(), any(), any(), any())).thenReturn(List.of(task));
+        assertThrows(RuntimeException.class, () -> taskService.createTask(task));
+    }
 
-}
+    @Test
+    public void testUpdateTaskNotFound() {
+        Task task = new Task();
+        task.setTaskId(1L);
+        when(taskRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(NoSuchElementException.class, () -> taskService.updateTask(task));
+    }
+    @Test
+    public void testSearchTasks() {
+        List<Task> tasks = new ArrayList<>();
+        when(taskRepository.searchTasks(any())).thenReturn(tasks);
+        List<Task> result = taskService.searchTasks("query");
+        assertEquals(tasks, result);
+    }
+
+    }
 
 

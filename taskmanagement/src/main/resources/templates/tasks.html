@@ -133,11 +133,35 @@ background-color: #3498db;
   text-decoration: none;
   transition: background-color 0.3s ease;
 }
+ .task-counts {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            text-decoration:none;
+ }
 
+ .task-count {
+            padding: 10px;
+            border-radius: 5px;
+            color: #fff;
+  }
+ .done {
+            background-color: #2ecc71;
+            text-decoration:none;
+  }
+ .in-progress {
+            background-color: #3498db;
+            text-decoration:none;
+        }
 
+ .todo {
+            background-color: #e74c3c;
+            text-decoration:none;
+}
 
 .create-task-btn:hover {
     background-color: #3e8e41;
+    text-decoration:none;
 }
 
 @media (max-width: 768px) {
@@ -212,11 +236,15 @@ background-color: #3498db;
                 </td>
             </tr>
         </table>
-
-
-
     </div>
-<a th:href="@{/tasks/create}"><button class="create-task-btn">Create Task</button>
+    <div class="task-counts">
+        <a th:href="@{/tasks/status/done}" class="task-count done">Done: <span th:text="${doneCount}">0</span></a>
+        <a th:href="@{/tasks/status/in-progress}" class="task-count in-progress">In Progress: <span th:text="${inProgressCount}">0</span></a>
+        <a th:href="@{/tasks/status/todo}" class="task-count todo">To-Do: <span th:text="${todoCount}">0</span></a>
+        <div>Total Tasks: <span th:text="${totalCount}">0</span></div>
+    </div>
+
+    <a th:href="@{/tasks/create}"><button class="create-task-btn">Create Task</button>
 </a>
 </div>
 
