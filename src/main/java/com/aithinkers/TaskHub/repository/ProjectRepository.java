@@ -1,7 +1,6 @@
-package com.aithinkers.TaskHub.Repository;
+package com.aithinkers.TaskHub.repository;
 
-import com.aithinkers.TaskHub.Entity.Project;
-import org.springframework.data.domain.*;
+import com.aithinkers.TaskHub.entity.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

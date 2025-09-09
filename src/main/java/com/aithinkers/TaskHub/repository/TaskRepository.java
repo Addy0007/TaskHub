@@ -1,6 +1,6 @@
-package com.aithinkers.TaskHub.Repository;
+package com.aithinkers.TaskHub.repository;
 
-import com.aithinkers.TaskHub.Entity.Task;
+import com.aithinkers.TaskHub.entity.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,5 +25,15 @@ public interface TaskRepository extends JpaRepository<Task,Long> {
            order by t.id desc
            """)
     List<Task> findAllByProjectIdWithAssignees(@Param("projectId") Long projectId);
+
+    //Return all tasks where the user is an assignee
+   /* @Query("""
+           SELECT DISTINCT t
+           FROM Task t
+           JOIN t.assignees u
+           WHERE u.id = :userId
+           ORDER BY t.id DESC
+           """)
+    List<Task> findAllAssignedToUser(@Param("userId") Long userId)*/
 
 }

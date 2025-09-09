@@ -1,10 +1,8 @@
-package com.aithinkers.TaskHub.Service;
+package com.aithinkers.TaskHub.service;
 
-import com.aithinkers.TaskHub.Entity.Project;
-import com.aithinkers.TaskHub.Repository.ProjectRepository;
+import com.aithinkers.TaskHub.entity.Project;
+import com.aithinkers.TaskHub.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import java.util.List;

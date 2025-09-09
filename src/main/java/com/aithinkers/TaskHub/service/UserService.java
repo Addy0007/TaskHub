@@ -1,13 +1,14 @@
-package com.aithinkers.TaskHub.Service;
+package com.aithinkers.TaskHub.service;
 
 
-import com.aithinkers.TaskHub.Entity.User;
-import com.aithinkers.TaskHub.Enum.Role;
-import com.aithinkers.TaskHub.Repository.UserRepository;
+import com.aithinkers.TaskHub.entity.User;
+import com.aithinkers.TaskHub.repository.RegisterUserRepo;
+import com.aithinkers.TaskHub.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,15 +19,24 @@ public class UserService {
      * Here Lambok's @requriedArgsconstructor generates that constructor for us
      * autowired best demo projects and private final lomboks constructor is good for production  */
     private final UserRepository userRepo;
+    private final RegisterUserRepo registerUserRepo;
 
     public List<User> findAll(){
         return userRepo.findAll();
     }
     //here we are fetching user by email
     //if not found it throws and illegal argument like user not found by thr given email
+    public User findByName(String name){
+        return registerUserRepo.findByName(name)
+                .orElseThrow(()-> new IllegalArgumentException("User Not Found : "+ name));
+    }
     public User findByEmail(String email){
-        return userRepo.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("USer Not Found : "+ email));
+        return registerUserRepo.findByEmail(email)
+                .orElseThrow(()-> new IllegalArgumentException("User Not Found : "+ email));
+    }
+    /** Accept either a username or an email */
+    public Optional<User> findByIdentifier(String id) {
+        return (id != null && id.contains("@")) ? registerUserRepo.findByEmail(id) : registerUserRepo.findByName(id);
     }
 
     /*Here this ensure method ensure that MAKE SURE  USER EXISTS.IF NOT ,CREATE ONe
@@ -46,7 +56,7 @@ public class UserService {
                         .build())
 		 */
 
-    public User ensure(String email, String name, Role role) {
+    /*public User ensure(String email, String name, Role role) {
         return userRepo.findByEmail(email).orElseGet(() ->
                 userRepo.save(User.builder()
                         .email(email)
@@ -54,7 +64,7 @@ public class UserService {
                         .role(role)
                         .build())
         );
-    }
+    }*/
     //builder() a lombark function
     //that generates static builder,you can construct objects clean and simple like above
     //or we need use EX:USer U=new User();->u.setEmail(email)etc

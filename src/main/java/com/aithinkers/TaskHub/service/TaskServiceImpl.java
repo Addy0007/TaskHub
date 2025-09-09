@@ -1,7 +1,7 @@
-package com.aithinkers.TaskHub.Service;
+package com.aithinkers.TaskHub.service;
 
-import com.aithinkers.TaskHub.Entity.Task;
-import com.aithinkers.TaskHub.Repository.TaskRepository;
+import com.aithinkers.TaskHub.entity.Task;
+import com.aithinkers.TaskHub.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

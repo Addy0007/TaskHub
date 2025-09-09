@@ -1,9 +1,9 @@
-package com.aithinkers.TaskHub.Service;
+package com.aithinkers.TaskHub.service;
 
-import com.aithinkers.TaskHub.Entity.Project;
-import com.aithinkers.TaskHub.Entity.User;
-import com.aithinkers.TaskHub.Repository.ProjectRepository;
-import com.aithinkers.TaskHub.Repository.UserRepository;
+import com.aithinkers.TaskHub.entity.Project;
+import com.aithinkers.TaskHub.entity.User;
+import com.aithinkers.TaskHub.repository.ProjectRepository;
+import com.aithinkers.TaskHub.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;

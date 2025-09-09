@@ -1,12 +1,10 @@
 package com.aithinkers.TaskHub.Controller;
 
-import com.aithinkers.TaskHub.Entity.Project;
-import com.aithinkers.TaskHub.Entity.User;
-import com.aithinkers.TaskHub.Enum.Role;
-import com.aithinkers.TaskHub.Service.ProjectService;
-import com.aithinkers.TaskHub.Service.ProjectServiceImpl;
-import com.aithinkers.TaskHub.Service.TaskService;
-import com.aithinkers.TaskHub.Service.UserService;
+import com.aithinkers.TaskHub.entity.Project;
+import com.aithinkers.TaskHub.entity.User;
+import com.aithinkers.TaskHub.service.ProjectService;
+import com.aithinkers.TaskHub.service.TaskService;
+import com.aithinkers.TaskHub.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,12 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/dashboard")
 public class DashboardController {
 
     /* we are using private final here as Construction Injection
@@ -48,19 +48,37 @@ Purpose: in the dashboard page, you’ll be able to display info about the curre
 * Similarly the Projects it fetches all the projects */
 
 
-    @GetMapping
-    public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model){
+    @GetMapping("/projects/dashboard")
+    public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model,
+                            @RequestParam(value = "jwt_token", required = false)String jwtToken) {
 
-        User me = userService.findByEmail(principal.getUsername());
+        // get the logged-in user entity (still needed for id, email, etc.)
+        User me = userService.findByName(principal.getUsername());
 
-        List<Project> projects = (me.getRole() == Role.ADMIN)
+        // check if user has ROLE_ADMIN
+        boolean isAdmin = principal.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .anyMatch("ROLE_ADMIN" :: equals);
+
+        // load projects accordingly
+        List<Project> projects = isAdmin
                 ? projectService.getAllProjects()
-                : projectService.getForUser(me.getId());   // << filter here
+                : projectService.getForUser(me.getId());
 
         model.addAttribute("myself", me);
         model.addAttribute("projects", projects);
-        model.addAttribute("tasks",taskService.getAllTasks());
-
-        return "dashboard/dashboard";
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("tasks", taskService.getAllTasks());
+        // whatever data you already add, plus:
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            model.addAttribute("jwt", jwtToken);
+        }
+        return "projects/dashboard";
     }
+
+    //if to keep old/dashboard URL working
+   /* @GetMapping("/dashboard")
+    public String redirectOld(){
+        return "redirect:/projects/dashboard";
+    }*/
 }

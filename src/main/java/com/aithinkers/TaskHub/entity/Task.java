@@ -1,4 +1,4 @@
-package com.aithinkers.TaskHub.Entity;
+package com.aithinkers.TaskHub.entity;
 
 import com.aithinkers.TaskHub.Enum.TaskPriority;
 import com.aithinkers.TaskHub.Enum.TaskStatus;

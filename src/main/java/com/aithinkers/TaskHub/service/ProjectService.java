@@ -1,7 +1,7 @@
-package com.aithinkers.TaskHub.Service;
+package com.aithinkers.TaskHub.service;
 
-import com.aithinkers.TaskHub.Entity.Project;
-import org.springframework.data.domain.*;
+import com.aithinkers.TaskHub.entity.Project;
+
 import java.util.List;
 
 public interface ProjectService {

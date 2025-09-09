@@ -1,6 +1,6 @@
 package com.aithinkers.TaskHub.Controller;
 
-import com.aithinkers.TaskHub.Service.UserService;
+import com.aithinkers.TaskHub.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
