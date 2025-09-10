@@ -5,7 +5,9 @@ import com.aithinkers.TaskHub.Service.ActivityService;
 import com.aithinkers.TaskHub.dto.ActivityCreateDTO;
 import com.aithinkers.TaskHub.dto.ActivityResponseDTO;
 import com.aithinkers.TaskHub.dto.ActivityUpdateDTO;
-import com.aithinkers.TaskHub.entity.Activity;
+import com.aithinkers.TaskHub.enums.ActionType;
+import com.aithinkers.TaskHub.enums.Priority;
+import com.aithinkers.TaskHub.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,7 +19,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -32,19 +33,17 @@ public class ActivityControllerTest {
 
     @MockitoBean
     private ActivityService activityService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
-
     @Test
-    void createActivity_returns201AndBody() throws Exception{
-        ActivityResponseDTO response=ActivityResponseDTO.builder()
-                .id(10L)
-                .taskId(1L)
-                .actionType(Activity.ActionType.CREATED)
+    void createActivity_returns201AndBody() throws Exception {
+        ActivityResponseDTO response = ActivityResponseDTO.builder()
+                .id(10L).taskId(1L)
+                .actionType(ActionType.CREATED)
                 .actionDetails("Task created: T1")
-                .performedBy(7L)
-                .priority(Activity.Priority.MEDIUM)
+                .performedBy(7L).priority(Priority.MEDIUM)
                 .timestamp(LocalDateTime.now())
                 .build();
 
@@ -52,11 +51,9 @@ public class ActivityControllerTest {
                 .thenReturn(response);
 
         ActivityCreateDTO request = ActivityCreateDTO.builder()
-                .taskId(1L)
-                .actionType(Activity.ActionType.CREATED)
+                .taskId(1L).actionType(ActionType.CREATED)
                 .actionDetails("Task created: T1")
-                .performedBy(7L)
-                .priority(Activity.Priority.MEDIUM)
+                .performedBy(7L).priority(Priority.MEDIUM)
                 .build();
 
         mockMvc.perform(post("/api/activities")
@@ -67,19 +64,18 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.taskId").value(1L))
                 .andExpect(jsonPath("$.actionDetails").value("Task created: T1"));
     }
+
     @Test
     void getActivityById_returns200_whenFound() throws Exception {
-        ActivityResponseDTO response=ActivityResponseDTO.builder()
-                .id(5L)
-                .taskId(99L)
-                .actionType(Activity.ActionType.UPDATED)
+        ActivityResponseDTO response = ActivityResponseDTO.builder()
+                .id(5L).taskId(99L)
+                .actionType(ActionType.UPDATED)
                 .actionDetails("updated details")
-                .performedBy(1L)
-                .priority(Activity.Priority.HIGH)
+                .performedBy(1L).priority(Priority.HIGH)
                 .timestamp(LocalDateTime.now())
                 .build();
 
-        Mockito.when(activityService.getActivityById(5L)).thenReturn(Optional.of(response));
+        Mockito.when(activityService.getActivityById(5L)).thenReturn(response);
 
         mockMvc.perform(get("/api/activities/5"))
                 .andExpect(status().isOk())
@@ -87,38 +83,38 @@ public class ActivityControllerTest {
                 .andExpect(jsonPath("$.taskId").value(99L))
                 .andExpect(jsonPath("$.actionDetails").value("updated details"));
     }
+
     @Test
     void getActivityById_returns404_whenNotFound() throws Exception {
-        Mockito.when(activityService.getActivityById(42L)).thenReturn(Optional.empty());
+        Mockito.when(activityService.getActivityById(42L))
+                .thenThrow(new ResourceNotFoundException("Activity not found with id: 42"));
 
         mockMvc.perform(get("/api/activities/42"))
                 .andExpect(status().isNotFound());
     }
-    // --- UPDATE ---
+
     @Test
     void updateActivity_returns200_whenFound() throws Exception {
         ActivityResponseDTO response = ActivityResponseDTO.builder()
-                .id(7L)
-                .taskId(100L)
-                .actionType(Activity.ActionType.UPDATED)
+                .id(7L).taskId(100L)
+                .actionType(ActionType.UPDATED)
                 .actionDetails("new info")
-                .performedBy(2L)
-                .priority(Activity.Priority.HIGH)
+                .performedBy(2L).priority(Priority.HIGH)
                 .timestamp(LocalDateTime.now())
                 .build();
 
         Mockito.when(activityService.updateActivity(eq(7L), any(ActivityUpdateDTO.class)))
-                .thenReturn(Optional.of(response));
+                .thenReturn(response);
 
         ActivityUpdateDTO updateRequest = ActivityUpdateDTO.builder()
-                .actionType(Activity.ActionType.UPDATED)
+                .actionType(ActionType.UPDATED)
                 .actionDetails("new info")
-                .priority(Activity.Priority.HIGH)
+                .priority(Priority.HIGH)
                 .build();
 
         mockMvc.perform(put("/api/activities/7")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(updateRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(7L))
                 .andExpect(jsonPath("$.actionDetails").value("new info"))
@@ -126,25 +122,25 @@ public class ActivityControllerTest {
     }
 
     @Test
-    void updateActivity_return404_whenNotFound() throws Exception{
+    void updateActivity_returns404_whenNotFound() throws Exception {
         Mockito.when(activityService.updateActivity(eq(99L), any(ActivityUpdateDTO.class)))
-                .thenReturn(Optional.empty());
+                .thenThrow(new ResourceNotFoundException("Activity not found with id: 99"));
 
         ActivityUpdateDTO updateRequest = ActivityUpdateDTO.builder()
-                .actionType(Activity.ActionType.UPDATED)
+                .actionType(ActionType.UPDATED)
                 .actionDetails("does not exist")
-                .priority(Activity.Priority.MEDIUM)
+                .priority(Priority.MEDIUM)
                 .build();
 
         mockMvc.perform(put("/api/activities/99")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(updateRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void deleteActivity_returns200_whenDeleted() throws Exception {
-        Mockito.when(activityService.deleteActivity(5L)).thenReturn(true);
+        Mockito.doNothing().when(activityService).deleteActivity(5L);
 
         mockMvc.perform(delete("/api/activities/5"))
                 .andExpect(status().isOk())
@@ -155,11 +151,10 @@ public class ActivityControllerTest {
 
     @Test
     void deleteActivity_returns404_whenNotFound() throws Exception {
-        Mockito.when(activityService.deleteActivity(99L)).thenReturn(false);
+        Mockito.doThrow(new ResourceNotFoundException("Activity not found"))
+                .when(activityService).deleteActivity(99L);
 
         mockMvc.perform(delete("/api/activities/99"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("Activity not found"));
+                .andExpect(status().isNotFound());
     }
 }

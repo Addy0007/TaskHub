@@ -1,6 +1,8 @@
 package com.aithinkers.TaskHub.dto;
 
 import com.aithinkers.TaskHub.entity.Activity;
+import com.aithinkers.TaskHub.enums.ActionType;
+import com.aithinkers.TaskHub.enums.Priority;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +19,9 @@ public class ActivityResponseDTO {
 
     private Long id;
     private Long taskId;
-    private Activity.ActionType actionType;
+    private ActionType actionType;
     private String actionDetails;
     private Long performedBy;
-    private Activity.Priority priority;
+    private Priority priority;
     private LocalDateTime timestamp;
 }

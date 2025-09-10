@@ -11,12 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+// import org.springframework.security.access.prepost.PreAuthorize; // commented for now
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/activities")
@@ -27,12 +27,14 @@ public class ActivityController {
 
     // CREATE endpoints
     @PostMapping
+    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<ActivityResponseDTO> createActivity(@Valid @RequestBody ActivityCreateDTO createDTO) {
         ActivityResponseDTO activity = activityService.createActivity(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(activity);
     }
 
     @PostMapping("/batch")
+    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<List<ActivityResponseDTO>> createActivities(@Valid @RequestBody List<ActivityCreateDTO> createDTOs) {
         List<ActivityResponseDTO> activities = activityService.createActivities(createDTOs);
         return ResponseEntity.status(HttpStatus.CREATED).body(activities);
@@ -40,6 +42,7 @@ public class ActivityController {
 
     // Quick logging endpoints
     @PostMapping("/log/task-created")
+    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<ActivityResponseDTO> logTaskCreated(
             @RequestParam Long taskId,
             @RequestParam Long createdBy,
@@ -50,6 +53,7 @@ public class ActivityController {
     }
 
     @PostMapping("/log/task-updated")
+    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<ActivityResponseDTO> logTaskUpdated(
             @RequestParam Long taskId,
             @RequestParam Long updatedBy,
@@ -60,6 +64,7 @@ public class ActivityController {
     }
 
     @PostMapping("/log/task-completed")
+    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<ActivityResponseDTO> logTaskCompleted(
             @RequestParam Long taskId,
             @RequestParam Long completedBy,
@@ -69,14 +74,16 @@ public class ActivityController {
         return ResponseEntity.ok(activity);
     }
 
-    // READ endpoints
+    // READ endpoints (any authenticated user)
     @GetMapping
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ActivitySummaryDTO>> getAllActivities() {
         List<ActivitySummaryDTO> activities = activityService.getAllActivities();
         return ResponseEntity.ok(activities);
     }
 
     @GetMapping("/paged")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<ActivitySummaryDTO>> getAllActivitiesPaged(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -86,19 +93,21 @@ public class ActivityController {
     }
 
     @GetMapping("/{id}")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ActivityResponseDTO> getActivityById(@PathVariable Long id) {
-        Optional<ActivityResponseDTO> activity = activityService.getActivityById(id);
-        return activity.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        ActivityResponseDTO activity = activityService.getActivityById(id);
+        return ResponseEntity.ok(activity);
     }
 
     @GetMapping("/task/{taskId}")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ActivitySummaryDTO>> getActivitiesByTask(@PathVariable Long taskId) {
         List<ActivitySummaryDTO> activities = activityService.getActivitiesByTask(taskId);
         return ResponseEntity.ok(activities);
     }
 
     @GetMapping("/task/{taskId}/paged")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<ActivitySummaryDTO>> getActivitiesByTaskPaged(
             @PathVariable Long taskId,
             @RequestParam(defaultValue = "0") int page,
@@ -109,12 +118,14 @@ public class ActivityController {
     }
 
     @GetMapping("/user/{userId}")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ActivitySummaryDTO>> getActivitiesByUser(@PathVariable Long userId) {
         List<ActivitySummaryDTO> activities = activityService.getActivitiesByUser(userId);
         return ResponseEntity.ok(activities);
     }
 
     @GetMapping("/recent")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ActivitySummaryDTO>> getRecentActivities(
             @RequestParam(defaultValue = "10") int limit) {
 
@@ -123,6 +134,7 @@ public class ActivityController {
     }
 
     @GetMapping("/task/{taskId}/recent")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ActivitySummaryDTO>> getRecentActivitiesForTask(
             @PathVariable Long taskId,
             @RequestParam(defaultValue = "24") int hoursBack) {
@@ -132,13 +144,14 @@ public class ActivityController {
     }
 
     @GetMapping("/task/{taskId}/latest")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ActivityResponseDTO> getLatestActivityForTask(@PathVariable Long taskId) {
-        Optional<ActivityResponseDTO> activity = activityService.getLatestActivityForTask(taskId);
-        return activity.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        ActivityResponseDTO activity = activityService.getLatestActivityForTask(taskId);
+        return ResponseEntity.ok(activity);
     }
 
     @GetMapping("/date-range")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ActivitySummaryDTO>> getActivitiesByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
@@ -148,25 +161,29 @@ public class ActivityController {
     }
 
     @GetMapping("/search")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ActivitySummaryDTO>> searchActivities(@RequestParam String keyword) {
         List<ActivitySummaryDTO> activities = activityService.searchActivities(keyword);
         return ResponseEntity.ok(activities);
     }
 
-    // Statistics endpoints
+    // Statistics
     @GetMapping("/task/{taskId}/count")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Long>> getActivityCountForTask(@PathVariable Long taskId) {
         long count = activityService.getActivityCountForTask(taskId);
         return ResponseEntity.ok(Map.of("count", count));
     }
 
     @GetMapping("/user/{userId}/count")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Long>> getActivityCountForUser(@PathVariable Long userId) {
         long count = activityService.getActivityCountForUser(userId);
         return ResponseEntity.ok(Map.of("count", count));
     }
 
     @GetMapping("/count")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Long>> getTotalActivityCount() {
         long count = activityService.getTotalActivityCount();
         return ResponseEntity.ok(Map.of("totalCount", count));
@@ -174,38 +191,30 @@ public class ActivityController {
 
     // UPDATE endpoints
     @PutMapping("/{id}")
+    // @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<ActivityResponseDTO> updateActivity(
             @PathVariable Long id,
             @Valid @RequestBody ActivityUpdateDTO updateDTO) {
 
-        Optional<ActivityResponseDTO> updatedActivity = activityService.updateActivity(id, updateDTO);
-        return updatedActivity.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        ActivityResponseDTO updatedActivity = activityService.updateActivity(id, updateDTO);
+        return ResponseEntity.ok(updatedActivity);
     }
 
-    // DELETE endpoints
+    // DELETE endpoints (admin only)
     @DeleteMapping("/{id}")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> deleteActivity(@PathVariable Long id) {
-        boolean deleted = activityService.deleteActivity(id);
-
-        if (deleted) {
-            Map<String, Object> response = Map.of(
-                    "message", "Activity deleted successfully",
-                    "id", id,
-                    "success", true
-            );
-            return ResponseEntity.ok(response);
-        } else {
-            Map<String, Object> response = Map.of(
-                    "message", "Activity not found",
-                    "id", id,
-                    "success", false
-            );
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
+        activityService.deleteActivity(id);
+        Map<String, Object> response = Map.of(
+                "message", "Activity deleted successfully",
+                "id", id,
+                "success", true
+        );
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/task/{taskId}")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> deleteActivitiesByTask(@PathVariable Long taskId) {
         activityService.deleteActivitiesByTask(taskId);
         Map<String, Object> response = Map.of(
@@ -217,6 +226,7 @@ public class ActivityController {
     }
 
     @DeleteMapping("/user/{userId}")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> deleteActivitiesByUser(@PathVariable Long userId) {
         activityService.deleteActivitiesByUser(userId);
         Map<String, Object> response = Map.of(
@@ -228,6 +238,7 @@ public class ActivityController {
     }
 
     @DeleteMapping("/cleanup")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> cleanupOldActivities(
             @RequestParam(defaultValue = "90") int daysToKeep) {
 
@@ -239,6 +250,7 @@ public class ActivityController {
     }
 
     @DeleteMapping("/all")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deleteAllActivities() {
         activityService.deleteAllActivities();
         Map<String, String> response = Map.of(
@@ -249,6 +261,7 @@ public class ActivityController {
 
     // Health check
     @GetMapping("/health")
+    // @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> getHealthStatus() {
         List<ActivitySummaryDTO> recentActivities = activityService.getRecentActivities(5);
         Map<String, Object> health = Map.of(

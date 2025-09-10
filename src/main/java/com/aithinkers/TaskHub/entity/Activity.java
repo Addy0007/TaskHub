@@ -1,5 +1,7 @@
 package com.aithinkers.TaskHub.entity;
 
+import com.aithinkers.TaskHub.enums.ActionType;
+import com.aithinkers.TaskHub.enums.Priority;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -14,9 +16,10 @@ public class Activity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "task_id", nullable = false)
+    @Column(name = "task_id", nullable = false, updatable = false)
     private Long taskId;
 
     @Enumerated(EnumType.STRING)
@@ -26,23 +29,15 @@ public class Activity {
     @Column(name = "action_details", length = 500)
     private String actionDetails;
 
-    @Column(name = "performed_by", nullable = false)
+    @Column(name = "performed_by", nullable = false, updatable = false)
     private Long performedBy;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
     private Priority priority;
 
-    @Column(name = "timestamp", nullable = false)
+    @Column(name = "timestamp", nullable = false, updatable = false)
     private LocalDateTime timestamp;
-
-    public enum Priority {
-        LOW, MEDIUM, HIGH
-    }
-
-    public enum ActionType {
-        CREATED, UPDATED, COMPLETED, DELETED, ASSIGNED, COMMENTED
-    }
 
     @PrePersist
     public void prePersist() {

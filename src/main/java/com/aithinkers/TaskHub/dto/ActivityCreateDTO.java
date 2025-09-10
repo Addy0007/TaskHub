@@ -1,6 +1,8 @@
 package com.aithinkers.TaskHub.dto;
 
 import com.aithinkers.TaskHub.entity.Activity;
+import com.aithinkers.TaskHub.enums.ActionType;
+import com.aithinkers.TaskHub.enums.Priority;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -20,7 +22,7 @@ public class ActivityCreateDTO {
     private Long taskId;
 
     @NotNull(message = "Action type is required")
-    private Activity.ActionType actionType;
+    private ActionType actionType;
 
     @Size(max = 500, message = "Action details cannot exceed 500 characters")
     private String actionDetails;
@@ -29,7 +31,7 @@ public class ActivityCreateDTO {
     private Long performedBy;
 
     @NotNull(message = "Priority is required")
-    private Activity.Priority priority;
+    private Priority priority;
 }
 
 

@@ -1,6 +1,8 @@
 package com.aithinkers.TaskHub.repository;
 
 import com.aithinkers.TaskHub.entity.Activity;
+import com.aithinkers.TaskHub.enums.ActionType;
+import com.aithinkers.TaskHub.enums.Priority;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -27,28 +29,28 @@ public class ActivityRepositoryTest {
 
         repo.save(Activity.builder()
                 .taskId(taskid)
-                .actionType(Activity.ActionType.CREATED)
+                .actionType(ActionType.CREATED)
                 .actionDetails("old")
                 .performedBy(1L)
-                .priority(Activity.Priority.MEDIUM)
+                .priority(Priority.MEDIUM)
                 .timestamp(LocalDateTime.now().minusMinutes(10))
                 .build());
 
 
         repo.save(Activity.builder()
                 .taskId(taskid)
-                .actionType(Activity.ActionType.UPDATED)
+                .actionType(ActionType.UPDATED)
                 .actionDetails("new")
                 .performedBy(1L)
-                .priority(Activity.Priority.MEDIUM)
+                .priority(Priority.MEDIUM)
                 .timestamp(LocalDateTime.now())
                 .build());
 
         List<Activity> list = repo.findByTaskIdOrderByTimestampDesc(taskid);
 
         assertThat(list).hasSize(2);
-        assertThat(list.get(0).getActionType()).isEqualTo(Activity.ActionType.UPDATED);
-        assertThat(list.get(1).getActionType()).isEqualTo(Activity.ActionType.CREATED);
+        assertThat(list.get(0).getActionType()).isEqualTo(ActionType.UPDATED);
+        assertThat(list.get(1).getActionType()).isEqualTo(ActionType.CREATED);
     }
     @Test
     void findRecentActivitiesForTask_filtersBySince() {
@@ -56,45 +58,45 @@ public class ActivityRepositoryTest {
 
         repo.save(Activity.builder()
                 .taskId(taskId)
-                .actionType(Activity.ActionType.CREATED)
+                .actionType(ActionType.CREATED)
                 .actionDetails("5h ago")
                 .performedBy(1L)
-                .priority(Activity.Priority.LOW)
+                .priority(Priority.LOW)
                 .timestamp(LocalDateTime.now().minusHours(5))
                 .build());
 
         repo.save(Activity.builder()
                 .taskId(taskId)
-                .actionType(Activity.ActionType.UPDATED)
+                .actionType(ActionType.UPDATED)
                 .actionDetails("1h ago")
                 .performedBy(1L)
-                .priority(Activity.Priority.HIGH)
+                .priority(Priority.HIGH)
                 .timestamp(LocalDateTime.now().minusHours(1))
                 .build());
 
         List<Activity> list = repo.findRecentActivitiesForTask(taskId, LocalDateTime.now().minusHours(2));
 
         assertThat(list).hasSize(1);
-        assertThat(list.get(0).getActionType()).isEqualTo(Activity.ActionType.UPDATED);
+        assertThat(list.get(0).getActionType()).isEqualTo(ActionType.UPDATED);
     }
 
     @Test
     void deleteByTimestampBefore_removesOldOnly() {
         repo.save(Activity.builder()
                 .taskId(1L)
-                .actionType(Activity.ActionType.CREATED)
+                .actionType(ActionType.CREATED)
                 .actionDetails("old")
                 .performedBy(1L)
-                .priority(Activity.Priority.LOW)
+                .priority(Priority.LOW)
                 .timestamp(LocalDateTime.now().minusDays(5))
                 .build());
 
         repo.save(Activity.builder()
                 .taskId(1L)
-                .actionType(Activity.ActionType.CREATED)
+                .actionType(ActionType.CREATED)
                 .actionDetails("new")
                 .performedBy(1L)
-                .priority(Activity.Priority.LOW)
+                .priority(Priority.LOW)
                 .timestamp(LocalDateTime.now())
                 .build());
 

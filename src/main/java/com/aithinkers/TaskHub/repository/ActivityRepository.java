@@ -1,6 +1,8 @@
 package com.aithinkers.TaskHub.repository;
 
 import com.aithinkers.TaskHub.entity.Activity;
+import com.aithinkers.TaskHub.enums.ActionType;
+import com.aithinkers.TaskHub.enums.Priority;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,8 +20,8 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     // Basic queries by single field
     List<Activity> findByTaskId(Long taskId);
     List<Activity> findByPerformedBy(Long userId);
-    List<Activity> findByActionType(Activity.ActionType actionType);
-    List<Activity> findByPriority(Activity.Priority priority);
+    List<Activity> findByActionType(ActionType actionType);
+    List<Activity> findByPriority(Priority priority);
 
     // With pagination
     Page<Activity> findByTaskId(Long taskId, Pageable pageable);
