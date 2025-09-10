@@ -110,8 +110,8 @@ public class AuthController {
     @GetMapping("/home")
     public String home(
             @RequestParam(name = "jwt_token", required = false) String jwt,
-            @AuthenticationPrincipal org.springframework.security.core.userdetails.UserDetails me,
-            org.springframework.ui.Model model) {
+            @AuthenticationPrincipal UserDetails me,
+            Model model) {
 
         // Build the same shape your Thymeleaf expects: response.username, response.roles, response.message, response.token
         java.util.Map<String, Object> response = new java.util.HashMap<>();
