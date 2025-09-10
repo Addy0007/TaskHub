@@ -1,4 +1,4 @@
-package com.aithinkers.TaskHub.Controller;
+package com.aithinkers.TaskHub.controller;
 
 import com.aithinkers.TaskHub.entity.Project;
 import com.aithinkers.TaskHub.entity.Task;
@@ -7,7 +7,6 @@ import com.aithinkers.TaskHub.Enum.ProjectType;
 import com.aithinkers.TaskHub.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 
-import javax.management.relation.Role;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -68,9 +66,11 @@ public class ProjectController {
     // Show create project form
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/new")
-    public String createProjectForm(Model model) {
+    public String createProjectForm(Model model,
+                                    @RequestParam(value = "jwt_token",required = false) String jwt) {
         model.addAttribute("form", new Project());
         model.addAttribute("types", ProjectType.values());
+        model.addAttribute("jwt",jwt);
         return "projects/create";
     }
 
@@ -183,12 +183,16 @@ Pageable → An interface that describes the pagination request (page number, pa
 
 
     @GetMapping("/{id:\\d+}/tasks")
-    public String viewTasksForProject(@PathVariable("id") Long projectId,Model model) {
+    public String viewTasksForProject(@PathVariable("id") Long projectId,
+                                      @AuthenticationPrincipal UserDetails me,
+            @RequestParam(value = "jwt_token", required = false) String jwt,Model model) {
         Project project = projectService.getProjectById(projectId);
         List<Task> tasks = taskService.getTasksForProject(projectId);
 
         model.addAttribute("project",project);
         model.addAttribute("tasks",tasks);
+        model.addAttribute("me",me);
+        model.addAttribute("jwt",jwt);
         return "tasks/list";
     }
 }

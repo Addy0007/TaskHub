@@ -1,4 +1,4 @@
-package com.aithinkers.TaskHub.Controller;
+package com.aithinkers.TaskHub.controller;
 
 import com.aithinkers.TaskHub.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,7 +26,8 @@ public class UserController {
     * model.addAttribute stores that list in the model under the key "Users".
     * the Return "user/List " the retrun value in sping MVC Controller is interpreted as VIEW NAME  */
     @GetMapping
-    public String list(Model model){
+    public String list(@RequestParam(value = "jwt_token",required = false) String jwt, Model model){
+        model.addAttribute("jwt",jwt);
         model.addAttribute("users",userService.findAll());
         return "users/userslist";
     }

@@ -1,4 +1,4 @@
-package com.aithinkers.TaskHub.Controller;
+package com.aithinkers.TaskHub.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.aithinkers.TaskHub.Controller;
+package com.aithinkers.TaskHub.controller;
 
 import com.aithinkers.TaskHub.entity.Project;
 import com.aithinkers.TaskHub.entity.User;
@@ -11,11 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Controller
