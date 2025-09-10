@@ -196,10 +196,20 @@
     </table>
 
     <div style="margin-top: 20px; text-align: center;">
-        <a class="btn back-btn" href="/api/auth/home">
-            🏠 <span>Back to Home</span>
+        <a class="btn back-btn"
+           th:href="@{/api/auth/home(jwt_token=${param.jwt_token})}">
+            <span>Back to Home</span>
         </a>
     </div>
 </div>
+<script>
+    (function () {
+      const t = localStorage.getItem('jwt');
+      const q = t ? ('?jwt_token=' + encodeURIComponent(t)) : '';
+      const s = document.createElement('script');
+      s.src = '/js/app.js' + q;          // loads nav(), attachJwtToForm(), etc. with token
+      document.head.appendChild(s);
+    })();
+</script>
 </body>
 </html>
