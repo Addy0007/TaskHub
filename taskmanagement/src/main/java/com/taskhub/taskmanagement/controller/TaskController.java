@@ -86,20 +86,21 @@ public class TaskController {
         taskService.deleteTask(taskId);
         return "redirect:/tasks";
     }
+    @Operation(summary = "get all todo tasks")
     @GetMapping("/status/todo")
     public String getTodoTasks(Model model) {
         List<Task> tasks = taskService.getTasksByStatus(TaskStatus.TODO);
         model.addAttribute("tasks", tasks);
         return "tasks";
     }
-
+    @Operation(summary = "get all tasks which are in progress")
     @GetMapping("/status/in-progress")
     public String getInProgressTasks(Model model) {
         List<Task> tasks = taskService.getTasksByStatus(TaskStatus.IN_PROGRESS);
         model.addAttribute("tasks", tasks);
         return "tasks";
     }
-
+    @Operation(summary = "get list of all completed tasks")
     @GetMapping("/status/done")
     public String getDoneTasks(Model model) {
         List<Task> tasks = taskService.getTasksByStatus(TaskStatus.DONE);

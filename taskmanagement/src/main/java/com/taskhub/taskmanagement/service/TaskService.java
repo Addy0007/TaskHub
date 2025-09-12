@@ -2,6 +2,9 @@ package com.taskhub.taskmanagement.service;
 
 import com.taskhub.taskmanagement.entity.Task;
 import com.taskhub.taskmanagement.entity.TaskStatus;
+import com.taskhub.taskmanagement.exception.InvalidTaskException;
+import com.taskhub.taskmanagement.exception.TaskAlreadyExistsException;
+import com.taskhub.taskmanagement.exception.TaskNotFoundException;
 import com.taskhub.taskmanagement.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,10 +26,10 @@ public class TaskService {
 
     public Task getTaskById(Long taskId) {
         if (taskId == null) {
-            throw new NullPointerException("Task ID is required");
+            throw new InvalidTaskException("Task ID is required");
         }
         try {
-            return taskRepository.findById(taskId).orElseThrow(() -> new NoSuchElementException("Task not found with ID " + taskId));
+            return taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found with ID " + taskId));
         } catch (Exception ex) {
             throw new RuntimeException("Failed to retrieve task", ex);
         }
@@ -34,13 +37,13 @@ public class TaskService {
 
     public Task createTask(Task task) {
         if (task == null) {
-            throw new NullPointerException("Task is required");
+            throw new InvalidTaskException("Task is required");
         }
         try {
             List<Task> existingTasks = taskRepository.findByTaskNameAndTaskDescriptionAndProjectIdAndCategory(
                     task.getTaskName(), task.getTaskDescription(), task.getProjectId(), task.getCategory());
             if (!existingTasks.isEmpty()) {
-                throw new RuntimeException("Task with same name, description, project ID, and category already exists.");
+                throw new TaskAlreadyExistsException("Task with same name, description, project ID, and category already exists.");
             }
             return taskRepository.save(task);
         } catch (Exception ex) {
@@ -50,7 +53,7 @@ public class TaskService {
 
     public Task updateTask(Task task) {
         if (task == null || task.getTaskId() == null) {
-            throw new NullPointerException("Task ID is required");
+            throw new InvalidTaskException("Task ID is required");
         }
         try {
             Task existingTask = taskRepository.findById(task.getTaskId()).orElseThrow(() -> new NoSuchElementException("Task not found with ID " + task.getTaskId()));
@@ -96,4 +99,5 @@ public class TaskService {
 
 
 
+    
 }
