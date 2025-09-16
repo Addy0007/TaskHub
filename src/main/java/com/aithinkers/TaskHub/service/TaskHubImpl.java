@@ -1,10 +1,9 @@
 package com.aithinkers.TaskHub.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -44,25 +43,19 @@ public class TaskHubImpl implements TaskHubService {
 	 */
 	@Override
 	public String registerTheUser(SignUpRequest signUpRequest) {
-		// Check if user already exists
 		if (repo.findByName(signUpRequest.getName()).isPresent()) {
 			throw new RuntimeException("Username already exists: " + signUpRequest.getName());
 		}
-		
-		// Check if email already exists
 		if (repo.findByEmail(signUpRequest.getEmail()).isPresent()) {
 			throw new RuntimeException("Email already registered: " + signUpRequest.getEmail());
 		}
-		
-		// Create new user entity
+
 		User user = new User();
 		user.setName(signUpRequest.getName());
-		// Encode password for security
 		user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-		user.setRole(signUpRequest.getRole());
+		user.setRole("ROLE_USER");
 		user.setEmail(signUpRequest.getEmail());
 
-		// Save user to database
 		repo.save(user);
 
 		return "User " + user.getName() + " saved successfully";
@@ -77,35 +70,35 @@ public class TaskHubImpl implements TaskHubService {
 	@Override
 	public LoginResponse authenticateTheUser(LoginRequest loginRequest) {
 
-	    Authentication authentication;
+		Authentication authentication;
 
-	    try {
-	        // Authenticate user using Spring Security
-	        authentication = authenticationManager.authenticate(
-	                new UsernamePasswordAuthenticationToken(
-	                		loginRequest.getUserName(), loginRequest.getPassword()));
-	    } catch (AuthenticationException exception) {
-	        throw new RuntimeException("Bad credentials");
-	    }
+		try {
+			// Authenticate user using Spring Security
+			authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(
+							loginRequest.getUserName(), loginRequest.getPassword()));
+		} catch (AuthenticationException exception) {
+			throw new RuntimeException("Bad credentials");
+		}
 
-	    // Set authentication in security context
-	    SecurityContextHolder.getContext().setAuthentication(authentication);
-	    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-	    
-	    // Generate JWT token for the authenticated user
-	    String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
-	    
-	    // Extract user roles
-	    List<String> roles = userDetails.getAuthorities()
-	            									.stream()
-	            										.map(item -> item.getAuthority())
-	            											.collect(Collectors.toList());
+		// Set authentication in security context
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-	    // Return login response with token and user details
-	    return new LoginResponse(userDetails.getUsername(),jwtToken,roles,"Login successful!");
-	  
+		// Generate JWT token for the authenticated user
+		String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
+
+		// Extract user roles
+		List<String> roles = userDetails.getAuthorities()
+				.stream()
+				.map(item -> item.getAuthority())
+				.collect(Collectors.toList());
+
+		// Return login response with token and user details
+		return new LoginResponse(userDetails.getUsername(),jwtToken,roles,"Login successful!");
+
 	}
-	
+
 	/**
 	 * Retrieves user details for profile update
 	 * @param username Username of the user
@@ -114,19 +107,19 @@ public class TaskHubImpl implements TaskHubService {
 	 */
 	@Override
 	public SignUpRequest getUserDetailsForUpdate(String username) {
-	    User user = repo.findByName(username)
-	            .orElseThrow(() -> new RuntimeException("User not found: " + username));
-	    
-	    // Convert User entity to SignUpRequest DTO
-	    SignUpRequest signUpRequest = new SignUpRequest();
-	    signUpRequest.setName(user.getName());
-	    signUpRequest.setEmail(user.getEmail());
-	    signUpRequest.setRole(user.getRole());
-	    signUpRequest.setPassword(user.getPassword()); 
+		User user = repo.findByName(username)
+				.orElseThrow(() -> new RuntimeException("User not found: " + username));
 
-	    return signUpRequest;
+		// Convert User entity to SignUpRequest DTO
+		SignUpRequest signUpRequest = new SignUpRequest();
+		signUpRequest.setName(user.getName());
+		signUpRequest.setEmail(user.getEmail());
+		//signUpRequest.setRole(user.getRole());
+		signUpRequest.setPassword(user.getPassword());
+
+		return signUpRequest;
 	}
-	
+
 	/**
 	 * Updates user profile information
 	 * @param username Username of the user to update
@@ -136,22 +129,22 @@ public class TaskHubImpl implements TaskHubService {
 	 */
 	@Override
 	public String updateUserProfile(String username, SignUpRequest signUpRequest) {
-	    User user = repo.findByName(username)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+		User user = repo.findByName(username)
+				.orElseThrow(() -> new RuntimeException("User not found"));
 
-	    // Update user details
-	    user.setName(signUpRequest.getName());
-	    user.setEmail(signUpRequest.getEmail());
-	    
-	    // Only update password if new password is provided
-	    if (signUpRequest.getPassword() != null && !signUpRequest.getPassword().isBlank()) {
-	        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-	    }
+		// Update user details
+		user.setName(signUpRequest.getName());
+		user.setEmail(signUpRequest.getEmail());
 
-	    // Save updated user to database
-	    repo.save(user);
-	    
-	    return "Profile updated successfully!";
+		// Only update password if new password is provided
+		if (signUpRequest.getPassword() != null && !signUpRequest.getPassword().isBlank()) {
+			user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+		}
+
+		// Save updated user to database
+		repo.save(user);
+
+		return "Profile updated successfully!";
 	}
 
 	/**
@@ -173,5 +166,27 @@ public class TaskHubImpl implements TaskHubService {
 	 */
 	public List<User> getAllUsers() {
 		return repo.findAll();
+	}
+
+	public User getUserById(Integer id) {
+		Optional<User> user=repo.findById(id);
+		return user.orElse(null);
+	}
+
+	@Override
+	public String updateUserRole(Integer id, String role) {
+		Optional<User> userOptional = repo.findById(id);
+		if (userOptional.isEmpty()) {
+			throw new RuntimeException("User not found");
+		}
+		User user = userOptional.get();
+		user.setRole(role);
+		repo.save(user);
+		return "Role updated";
+	}
+
+	@Override
+	public void deleteUserById(Integer id) {
+		repo.deleteById(id);
 	}
 }

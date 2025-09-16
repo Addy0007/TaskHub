@@ -1,123 +1,269 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Profile Management - TaskHub</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f6fa;
+    margin: 0;
+    padding: 0;
+    }
+
+    /* Top navigation/header */
+    .header {
+    width: 100%;
+    background-color: #3498db;
+    padding: 15px 0;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Form container */
+    .container {
+    width: 400px;
+    margin: 40px auto;   /* push from top but keep in center horizontally */
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Heading inside form */
+    h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #2c3e50;
+    }
+
+    h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #7f8c8d;
+    font-size: 16px;
+    font-weight: normal;
+    }
+
+    /* Input fields */
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    select {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.3s;
+    box-sizing: border-box;
+    }
+
+    input:focus,
+    select:focus {
+    border-color: #3498db;
+    }
+
+    /* Select dropdown styling */
+    select {
+    background-color: white;
+    cursor: pointer;
+    }
+
+    select option {
+    padding: 8px;
+    }
+
+    /* Button */
+    button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    }
+
+    button:hover {
+    background-color: #2980b9;
+    }
+
+    /* Success page container */
+    .success-container {
+    max-width: 500px;
+    margin: 100px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Success message */
+    .success-container h2 {
+    color: #27ae60;
+    margin-bottom: 20px;
+    font-size: 22px;
+    }
+
+    /* Back link styled like a button */
+    .success-container a {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: background 0.3s;
+    }
+
+    .success-container a:hover {
+    background-color: #2980b9;
+    }
+
+    /* Small text styling */
+    small {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #666;
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+    .container {
+    width: 90%;
+    margin: 20px auto;
+    padding: 20px;
+    }
+
+    .success-container {
+    width: 90%;
+    margin: 20px auto;
+    padding: 20px;
+    }
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h2>👤 Profile Management</h2>
-        <h3>View and Update Your Information</h3>
+<div class="container">
+    <h2>👤 Profile Management</h2>
+    <h3>View and Update Your Information</h3>
 
-        <!-- Success/Error Message -->
-        <div th:if="${message}" style="background-color: #e8f5e8; color: #2e7d32; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
-            <p th:text="${message}"></p>
-        </div>
-
-        <!-- Profile Form -->
-        <form th:action="@{/api/auth/update}" th:object="${signUpRequest}" method="post" id="profileForm">
-            <div>
-                <label for="name">Full Name:</label>
-                <input type="text" id="name" th:field="*{name}" placeholder="Enter your full name" required />
-            </div>
-
-            <div>
-                <label for="email">Email Address:</label>
-                <input type="email" id="email" th:field="*{email}" placeholder="Enter your email address" required />
-            </div>
-
-            <div>
-                <label for="role">Role:</label>
-                <input type="text" id="role" th:field="*{role}" readonly style="background-color: #f5f5f5;" />
-                <small style="color: #666; font-size: 12px;">Role cannot be changed</small>
-            </div>
-
-            <div>
-                <label for="password">New Password:</label>
-                <input type="password" id="password" th:field="*{password}" placeholder="Leave blank to keep current password" />
-                <small style="color: #666; font-size: 12px;">Only fill if you want to change your password</small>
-            </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="button" onclick="submitForm()" style="flex: 1;">💾 Update Profile</button>
-                <button type="button" onclick="goBack()" style="flex: 1; background-color: #95a5a6;">⬅️ Go Back</button>
-            </div>
-        </form>
-
-        <!-- Logout Button -->
-        <div style="text-align: center; margin-top: 20px;">
-            <button onclick="logout()" style="background-color: #e74c3c; width: auto; padding: 10px 20px;">
-                🚪 Logout
-            </button>
-        </div>
+    <!-- Success/Error Message -->
+    <div th:if="${message}" style="background-color: #e8f5e8; color: #2e7d32; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
+        <p th:text="${message}"></p>
     </div>
 
-    <script>
-        // Function to submit form with JWT token in headers
-		function submitForm() {
-		    let token = localStorage.getItem('jwt');
-		    if (!token) {
-		        alert('No JWT token found. Please login again.');
-		        window.location.href = '/api/auth/login';
-		        return;
-		    }
+    <!-- Profile Form -->
+    <form th:action="@{/api/auth/update}" th:object="${signUpRequest}" method="post" id="profileForm">
+        <div>
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" th:field="*{name}" placeholder="Enter your full name" required />
+        </div>
 
-		    let form = document.getElementById('profileForm');
-		    let formData = new FormData(form);
+        <div>
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" th:field="*{email}" placeholder="Enter your email address" required />
+        </div>
 
-		    fetch('/api/auth/update', {
-		        method: 'POST',
-		        headers: {
-		            'Authorization': 'Bearer ' + token,
-		            'Content-Type': 'application/x-www-form-urlencoded',
-		        },
-		        body: new URLSearchParams(formData)
-		    })
-		    .then(response => response.text())   // ✅ Get Thymeleaf HTML back
-		    .then(html => {
-		        // ✅ Replace current page with updated Thymeleaf-rendered HTML
-		        document.open();
-		        document.write(html);
-		        document.close();
-		    })
-		    .catch(error => {
-		        console.error('Error:', error);
-		        alert('Update failed. Please try again.');
-		    });
-		}
+        <div>
+            <label for="password">New Password:</label>
+            <input type="password" id="password" th:field="*{password}" placeholder="Leave blank to keep current password" />
+            <small style="color: #666; font-size: 12px;">Only fill if you want to change your password</small>
+        </div>
 
-        // Function to go back to welcome page
-        function goBack() {
-            let token = localStorage.getItem('jwt');
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="button" onclick="submitForm()" style="flex: 1;">💾 Update Profile</button>
+            <button type="button" onclick="goBack()" style="flex: 1; background-color: #95a5a6;">⬅️ Go Back</button>
+        </div>
+    </form>
+
+    <!-- Logout Button -->
+    <div style="text-align: center; margin-top: 20px;">
+        <button onclick="logout()" style="background-color: #e74c3c; width: auto; padding: 10px 20px;">
+            🚪 Logout
+        </button>
+    </div>
+</div>
+
+<script>
+    // Function to submit form with JWT token in headers
+    function submitForm() {
+        let token = localStorage.getItem('jwt');
+        if (!token) {
+            alert('No JWT token found. Please login again.');
+            window.location.href = '/api/auth/login';
+            return;
+        }
+
+        let form = document.getElementById('profileForm');
+        let formData = new FormData(form);
+
+        fetch('/api/auth/update', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(formData)
+        })
+        .then(response => response.text())   // ✅ Get Thymeleaf HTML back
+        .then(html => {
+            // ✅ Replace current page with updated Thymeleaf-rendered HTML
+            document.open();
+            document.write(html);
+            document.close();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Update failed. Please try again.');
+        });
+    }
+
+    // Function to go back to welcome page
+    function goBack() {
+        let token = localStorage.getItem('jwt');
+        if (token) {
+            window.location.href = '/api/auth/home?jwt_token=' + encodeURIComponent(token);
+        } else {
+            window.location.href = '/api/auth/login';
+        }
+    }
+
+    // Logout function
+    function logout() {
+        localStorage.removeItem('jwt');
+        window.location.href = '/api/auth/login';
+    }
+
+    // Check if user is authenticated
+    document.addEventListener('DOMContentLoaded', function() {
+        let token = localStorage.getItem('jwt');
+        if (!token) {
+            // Try to get token from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            token = urlParams.get('jwt_token');
             if (token) {
-                window.location.href = '/api/auth/welcome?jwt_token=' + encodeURIComponent(token);
+                localStorage.setItem('jwt', token);
             } else {
+                alert('Please login first!');
                 window.location.href = '/api/auth/login';
             }
         }
-
-        // Logout function
-        function logout() {
-            localStorage.removeItem('jwt');
-            window.location.href = '/api/auth/login';
-        }
-
-        // Check if user is authenticated
-        document.addEventListener('DOMContentLoaded', function() {
-            let token = localStorage.getItem('jwt');
-            if (!token) {
-                // Try to get token from URL parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                token = urlParams.get('jwt_token');
-                if (token) {
-                    localStorage.setItem('jwt', token);
-                } else {
-                    alert('Please login first!');
-                    window.location.href = '/api/auth/login';
-                }
-            }
-        });
-    </script>
+    });
+</script>
+<script src="/js/app.js"></script>
 </body>
 </html>

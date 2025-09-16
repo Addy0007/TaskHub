@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task</title>
+    <style>.task-details {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.task-details h1 {
+    margin-top: 0;
+}
+
+.task-details p {
+    margin-bottom: 20px;
+}
+
+.task-details span {
+    font-weight: bold;
+}
+    </style>
+</head>
+<body class="task-details">
+<h1>Task</h1>
+<p>Task ID: <span th:text="${task.taskId}">Task ID</span></p>
+<p>Task Name: <span th:text="${task.taskName}">Task Name</span></p>
+<p>Task Description: <span th:text="${task.taskDescription}">Task Description</span></p>
+<p>Project ID: <span th:text="${task.projectId}">Project ID</span></p>
+<p>Assigned To: <span th:text="${task.assignedTo}">Assigned To</span></p>
+<p>Status: <span th:text="${task.status}">Status</span></p>
+<p>Priority: <span th:text="${task.priority}">Priority</span></p>
+<p>Due Date: <span th:text="${task.dueDate}">Due Date</span></p>
+
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard • TaskHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Add this in <head> -->
+  <meta name="home-path" th:content="@{/projects/home}"/>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Your app css (served from src/main/resources/static/css/style.css) -->
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+
+  <style>
+    :root{
+      --bg:#f5f7fb; --ink:#1f2a44; --muted:#6b778c;
+      --team:#0d6efd; --company:#20c997; --admin:#6f42c1; --default:#6c757d;
+      --todo:#6c757d; --inprog:#0d6efd; --review:#fd7e14; --done:#198754; --blocked:#dc3545;
+    }
+    body{ background:var(--bg); color:var(--ink); }
+
+    .navbar{
+      background:#fff; box-shadow:0 6px 24px rgba(18,38,63,.06);
+      border:1px solid rgba(0,0,0,.04); border-radius:14px; padding:.75rem 1rem;
+      margin:18px auto; max-width:1100px;
+    }
+    .brand{ font-weight:800; letter-spacing:.2px; color:#1266f1 !important; }
+
+    .container-narrow{ max-width:1100px; }
+    .card{ border:1px solid rgba(0,0,0,.05); border-radius:14px; box-shadow:0 10px 24px rgba(18,38,63,.08); }
+    .card-ghost{ background:#fff; }
+    .section-title{ font-weight:700; color:var(--ink); }
+
+    /* project card / list rows */
+    .project-card{ transition:.2s ease; }
+    .project-card:hover{ transform:translateY(-2px); box-shadow:0 12px 28px rgba(18,38,63,.08); }
+
+    /* badges */
+    .badge{ border-radius:999px; font-weight:600; padding:.35rem .6rem; }
+    .badge-type-team{ background:var(--team); }
+    .badge-type-company{ background:var(--company); }
+    .badge-type-admin{ background:var(--admin); }
+    .badge-type-default{ background:var(--default); }
+
+    .creator{ color:var(--muted); }
+
+    /* status chips */
+    .status{ border-radius:999px; font-weight:700; padding:.35rem .65rem; }
+    .s-todo{ background:var(--todo); }
+    .s-inprogress{ background:var(--inprog); }
+    .s-review{ background:var(--review); }
+    .s-done{ background:var(--done); }
+    .s-blocked{ background:var(--blocked); }
+  </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<nav class="navbar container-narrow">
+  <div class="d-flex w-100 justify-content-between align-items-center">
+    <!--Branding-->
+    <a class="navbar-brand brand" href="#" onclick="return nav('/projects/dashboard');">TaskHub</a>
+
+    <div class="d-flex align-items-center gap-2">
+      <!-- Back to Home button -->
+      <!-- Back to Home button (GET with JWT in query) -->
+      <!-- Back to Home (POST with JWT) -->
+      <!-- Tell JS where "Home" should go (use the page you control) -->
+      <!-- Back to Home (GET) -->
+      <!-- Back to Home button on dashboard -->
+      <a class="btn btn-outline-primary btn-sm"
+         href="#"
+         onclick="return nav('/api/auth/home')">
+        ⬅ Back to Home
+      </a>
+
+      <a th:if="${isAdmin}" class="btn btn-primary btn-sm"
+         href="#" onclick="return nav('/projects/new');">+ Create project</a>
+
+      <a class="btn btn-outline-secondary btn-sm"
+         href="#" onclick="return nav('/projects');">All projects</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Content -->
+<div class="container container-narrow">
+  <div class="row g-4">
+
+    <!-- Projects column -->
+    <div class="col-12 col-lg-7">
+      <div class="card card-ghost p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="section-title mb-0">My / Recent Projects</h5>
+          <a href="#" class="small text-decoration-none" onclick="return nav('/projects');">View all</a>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(projects)}" class="text-muted">
+          No projects yet.
+          <a th:if="${isAdmin}" href="#" onclick="return nav('/projects/new');">Create one</a>.
+        </div>
+
+        <!-- Project list -->
+        <div th:each="p : ${projects}" class="project-card card mb-2 p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <a href="#" class="link-dark fw-semibold text-decoration-none"
+                 th:text="${p.name}"
+                 th:attr="onclick=|return nav('/projects/${p.id}')|">Open</a>
+
+              <!-- type badge (compare by ENUM.name()) -->
+              <span class="badge text-white"
+                    th:with="typeName=${p.projectType != null ? p.projectType.name() : 'DEFAULT'}"
+                    th:classappend="${typeName} == 'TEAM_MANAGED'    ? ' badge-type-team' :
+                                      (${typeName} == 'COMPANY_MANAGED' ? ' badge-type-company' :
+                                      (${typeName} == 'ADMIN'           ? ' badge-type-admin' :
+                                                                           ' badge-type-default'))"
+                    th:text="${typeName}">DEFAULT</span>
+            </div>
+
+            <!-- Project name and Open button/link -->
+            <!--a th:href="@{/projects/{id}(id=${p.id}, jwt_token=${jwt})}">Open</a-->
+            <a href="#" class="btn btn-sm btn-outline-primary"
+               th:attr="onclick=|return nav('/projects/${p.id}')|">Open</a>
+          </div>
+
+          <small class="creator d-block mt-1"
+                 th:text="${p.createdBy != null ? p.createdBy.name : '—'}">Creator</small>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="card card-ghost p-3 mt-3">
+        <h6 class="mb-2">Quick actions</h6>
+        <div class="d-grid gap-2">
+          <a th:if="${isAdmin}" class="btn btn-primary" href="#" onclick="return nav('/projects/new');">Create project</a>
+          <a class="btn btn-outline-secondary" href="#" onclick="return nav('/projects');">Browse projects</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tasks column -->
+    <div class="col-12 col-lg-5">
+      <div class="card card-ghost p-3">
+        <h6 class="section-title mb-3">My tasks</h6>
+
+        <div th:if="${#lists.isEmpty(tasks)}" class="text-muted">No tasks assigned.</div>
+
+        <div th:each="t : ${tasks}" class="card mb-2 p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="pe-3">
+              <strong th:text="${t.title}">Task title</strong><br/>
+              <small class="text-muted" th:text="${t.description}">Description</small>
+            </div>
+
+            <!-- colored status pill (compare by ENUM.name()) -->
+            <span class="status text-white"
+                  th:with="s=${t.status != null ? t.status.name() : 'TODO'}"
+                  th:classappend="${s} == 'TODO'         ? ' s-todo' :
+                                    (${s} == 'IN_PROGRESS' ? ' s-inprogress' :
+                                    (${s} == 'REVIEW'      ? ' s-review' :
+                                    (${s} == 'DONE'        ? ' s-done' : ' s-blocked'))}"
+                  th:text="${s}">TODO</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/app.js"></script>
+
+<!-- Tiny in-page fallback (only used if /js/app.js failed to load) -->
+<script>
+  (function(){
+    if (typeof window.nav === 'function') return;
+
+    function getJwt(){ try { return localStorage.getItem('jwt'); } catch(e){ return null; } }
+    window.nav = function(path){
+      const t = getJwt();
+      if (!t) { window.location.href = '/api/auth/login'; return false; }
+      const sep = path.includes('?') ? '&' : '?';
+      window.location.href = path + sep + 'jwt_token=' + encodeURIComponent(t);
+      return false;
+    };
+  })();
+</script>
+<script>
+  // Save jwt from URL into localStorage on first load
+  (function ensureJwtOnLoad(){
+    try {
+      const u = new URL(window.location.href);
+      const q = u.searchParams.get('jwt_token');
+      if (q) localStorage.setItem('jwt', q);
+    } catch (e) {}
+  })();
+
+  function getJwt() {
+    try { return localStorage.getItem('jwt'); } catch(e) { return null; }
+  }
+
+  // Back to Home -> GET /api/auth/home?jwt_token=<token>
+  function gotoHome(ev){
+    if (ev) ev.preventDefault();
+    const t = getJwt();
+    if (!t) {                     // hard fallback: send user to login
+      window.location.href = '/api/auth/login';
+      return false;
+    }
+    const url = '/api/auth/home?jwt_token=' + encodeURIComponent(t);
+    window.location.assign(url);
+    return false;
+  }
+</script>
+<script>
+  (function () {
+    const jwt = localStorage.getItem('jwt');
+    const s = document.createElement('script');
+    s.src = '/js/app.js' + (jwt ? '?jwt_token=' + encodeURIComponent(jwt) : '');
+    document.head.appendChild(s);
+  })();
+</script>
+<script>
+  function postHomeWithJwt(form) {
+    try {
+      const jwt = localStorage.getItem('jwt');
+      if (!jwt) {           // no token -> send user to login
+        window.location.href = '/api/auth/login';
+        return false;
+      }
+      // Patch the action to include the token as query param that your filter reads
+      const u = new URL(form.action, window.location.origin);
+      u.searchParams.set('jwt_token', jwt);
+      form.action = u.pathname + u.search;
+      return true;          // let the POST proceed
+    } catch (e) {
+      console.error('JWT attach failed', e);
+      return false;
+    }
+  }
+</script>
+<script src="/js/app.js"></script>
+</body>
+</html>

@@ -24,4 +24,7 @@ public interface RegisterUserRepo extends JpaRepository<User, Integer> {
 	 * @return Optional containing user if found
 	 */
 	Optional<User> findByEmail(String email);
+
+	boolean existsByName(String name);
+	boolean existsByEmail(String email);
 }

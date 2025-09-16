@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error Page</title>
+    <style>
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h1>Error Occurred</h1>
+<div th:if="${errorMessage}">
+    <p class="error-message" th:text="${errorMessage}"></p>
+</div>
+<div th:if="${errors}">
+    <ul>
+        <li th:each="error : ${errors}" th:text="${error.key} + ': ' + ${error.value}" class="error-message"></li>
+    </ul>
+</div>
+<a th:href="@{/}">Back to Home</a>
+</body>
+</html>
+
