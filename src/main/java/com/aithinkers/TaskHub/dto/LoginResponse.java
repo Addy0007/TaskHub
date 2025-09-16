@@ -14,5 +14,4 @@ public class LoginResponse {
 	private String token;
 	private List<String> roles;
 	private String message;
-
 }

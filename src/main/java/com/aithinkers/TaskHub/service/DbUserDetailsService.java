@@ -23,33 +23,33 @@ import lombok.RequiredArgsConstructor;
 public class DbUserDetailsService implements UserDetailsService {
 
     private final RegisterUserRepo registerUserRepo;
+    private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(DbUserDetailsService.class);
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.debug("Attempting to load user by username: {}", username);
-        
-        User user = registerUserRepo.findByName(username)
-            .orElseThrow(() -> {
-                logger.error("User not found in database: {}", username);
-                return new UsernameNotFoundException("User not found: " + username);
-            });
 
-        logger.debug("User found: {} with role: {}", user.getName(), user.getRole());
-        
+
+    @Override
+    public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
+        logger.debug("Attempting to load user by identifier: {}", identifier);
+
+        com.aithinkers.TaskHub.entity.User user =
+                (identifier != null && identifier.contains("@"))
+                        ? registerUserRepo.findByEmail(identifier)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found by email: " + identifier))
+                        : registerUserRepo.findByName(identifier)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found by name: " + identifier));
+
         Collection<GrantedAuthority> authorities = parseAuthorities(user.getRole());
 
+        // Important: Security "username" = NAME (not email)
         return org.springframework.security.core.userdetails.User
-            .withUsername(user.getName())
-            .password(user.getPassword())
-            .authorities(authorities)
-            .accountLocked(false)
-            .accountExpired(false)
-            .credentialsExpired(false)
-            .disabled(false)
-            .build();
+                .withUsername(user.getName())
+                .password(user.getPassword())
+                .authorities(authorities)
+                .accountLocked(false).accountExpired(false)
+                .credentialsExpired(false).disabled(false)
+        .build();
     }
-
     private Collection<GrantedAuthority> parseAuthorities(String roleField) {
         if (roleField == null || roleField.isBlank()) {
             return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
